@@ -1,0 +1,31 @@
+{
+  "name": "json-schema-to-graphql-types",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "description": "Convert JSON schema to GraphQL types (string) including GraphQL transforms/directives.",
+  "license": "MIT",
+  "author": "Kristian Mandrup <kmandrup@gmail.com>",
+  "homepage": "https://github.com/kristianmandrup/json-schema-to-graphql-types#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kristianmandrup/json-schema-to-graphql-types.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kristianmandrup/json-schema-to-graphql-types/issues",
+    "email": "kmandrup@gmail.com"
+  },
+  "devDependencies": {
+    "jest": "^23.0.0"
+  },
+  "keywords": [
+    "json",
+    "json-schema",
+    "schema",
+    "graphql",
+    "types",
+    "transforms"
+  ],
+  "scripts": {
+    "test": "jest"
+  }
+}
