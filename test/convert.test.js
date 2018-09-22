@@ -15,7 +15,8 @@ const schema = {
     id: {
       type: "string",
       generated: true,
-      unique: true
+      unique: true,
+      required: true
     },
     "name": {
       "description": "Name of the person",
@@ -41,7 +42,7 @@ const schema = {
       "description": "Bank accounts",
       "type": "array",
       "items": {
-        "type": "Account"
+        "$ref": "#/definitions/account"
       }
     },
     "numberOfChildren": {
@@ -85,7 +86,8 @@ const schema = {
         id: {
           type: "string",
           generated: true,
-          unique: true
+          unique: true,
+          required: true
         },
         "name": {
           "description": "Name of the account",
@@ -123,27 +125,44 @@ describe('converts JSON schema to GraphQL types with decorators', () => {
     })
 
     test('has an id property of type ID', () => {
+      expect(Person.props.id.is).toEqual('primitive')
       expect(Person.props.id.type).toEqual('ID')
     })
 
     test('has an name property of type String', () => {
+      expect(Person.props.name.is).toEqual('primitive')
       expect(Person.props.name.type).toEqual('String')
     })
 
     test('has an money property of type Float', () => {
+      expect(Person.props.money.is).toEqual('primitive')
       expect(Person.props.money.type).toEqual('Float')
     })
 
-    test('has an accounts property of type [Account]', () => {
+    test('has an money property of type Float', () => {
+      expect(Person.props.age.is).toEqual('primitive')
+      expect(Person.props.age.type).toEqual('Int')
+      expect(Person.props.age.required).toBe(true)
+    })
+
+    test('has an accounts property of type [Account] referencing definition Account', () => {
+      expect(Person.props.accounts.is).toEqual('type-ref')
+      expect(Person.props.accounts.multiple).toBe(true)
+      expect(Person.props.accounts.ref).toBe('reference')
+      expect(Person.props.accounts.definition).toBe('account')
       expect(Person.props.accounts.type).toEqual('[Account]')
     })
 
     test('has an numberOfChildren property of type [Int]', () => {
+      expect(Person.props.numberOfChildren.is).toEqual('primitive')
+      expect(Person.props.numberOfChildren.multiple).toBe(true)
       expect(Person.props.numberOfChildren.type).toEqual('[Int]')
     })
 
-    test('has a car property of type Car', () => {
-      expect(Person.props.car.type).toEqual('Car')
+    test('has a car property of type PersonCar', () => {
+      expect(Person.props.car.is).toEqual('type-ref')
+      expect(Person.props.car.ref).toEqual('embedded')
+      expect(Person.props.car.type).toEqual('PersonCar')
     })
 
     test('pretty prints Person type', () => {
@@ -175,9 +194,9 @@ describe('converts JSON schema to GraphQL types with decorators', () => {
     })
 
     test('has an inline type enum of type AccountType', () => {
-      expect(Account.props.type.is).toEqual('type')
-      expect(Account.props.type.ref).toEqual('embedded')
+      expect(Account.props.type.is).toEqual('enum')
       expect(Account.props.type.type).toEqual('AccountType')
+      expect(Account.props.type.required).toBe(true)
     })
 
     test('pretty prints Account type', () => {
@@ -187,8 +206,14 @@ describe('converts JSON schema to GraphQL types with decorators', () => {
   })
 
   describe('PersonCar type', () => {
+    const Car = types['PersonCar']
+
     test('is named Account', () => {
       expect(Car.name).toEqual('PersonCar')
+    })
+
+    test('is an enum', () => {
+      expect(Car.is).toEqual('type')
     })
 
     test('has an name property of type String', () => {
@@ -207,6 +232,10 @@ describe('converts JSON schema to GraphQL types with decorators', () => {
 
     test('is named Color', () => {
       expect(Color.name).toEqual('Color')
+    })
+
+    test('is an enum', () => {
+      expect(Color.is).toEqual('enum')
     })
 
     test('has client decorator', () => {

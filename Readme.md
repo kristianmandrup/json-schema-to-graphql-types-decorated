@@ -2,6 +2,10 @@
 
 Convert JSON schema to GraphQL types (string) including GraphQL transforms/directives (decoratots).
 
+## Status: WIP
+
+Under development. See the master branch for a stable (but primitive) working solution.
+
 ## Quick start
 
 - npm: `npm install json-schema-to-es-mapping -S`
@@ -16,11 +20,17 @@ const schema = {
   title: "Person",
   description: "A person",
   type: "object",
+  graphql: {
+    decorators: {
+      client: true
+    }
+  },
   properties: {
     id: {
       type: "string",
       generated: true,
-      unique: true
+      unique: true,
+      required: true
     },
     name: {
       description: "Name of the person",
@@ -46,7 +56,69 @@ const schema = {
       description: "Bank accounts",
       type: "array",
       items: {
-        type: "Account"
+        $ref: "#/definitions/account"
+      }
+    },
+    numberOfChildren: {
+      description: "Children parented",
+      type: "array",
+      items: {
+        type: "number",
+        enum: [0, 1, 2]
+      }
+    },
+    favoriteCoulor: {
+      description: "Colors liked",
+      name: "color",
+      type: "string",
+      items: {
+        type: "number",
+        enum: ["red", "green", "blue"]
+      }
+    },
+    car: {
+      description: "Car owned",
+      type: "object",
+      decorators: {
+        model: true
+      },
+      properties: {
+        name: {
+          type: "string",
+          required: true
+        }
+      }
+    }
+  },
+  definitions: {
+    account: {
+      description: "Bank account",
+      type: "object",
+      decorators: {
+        client: true
+      },
+      properties: {
+        id: {
+          type: "string",
+          generated: true,
+          unique: true,
+          required: true
+        },
+        name: {
+          description: "Name of the account",
+          type: "string"
+        },
+        money: {
+          description: "Money in account",
+          type: "number",
+          required: true
+        },
+        type: {
+          description: "Account type",
+          // should be implicit: "name": "AccountType",
+          type: "string",
+          enum: ["saving", "credit"]
+        }
       }
     }
   },
@@ -63,24 +135,55 @@ console.log({
 
 Will output the following GraphQL types (as a raw indented text)
 
+### Person type
+
 ```graphql
 type Person {
   id: ID!
   name: String! @connection(name: "UserNames")
   age: Int!
   money: Float
+  car: PersonCar
   accounts: [Account]
 }
 ```
 
-Using `config` object (see below)
+### PersonCar type
 
-```js
-const mapping = buildTypes(schema, config);
+```graphql
+type @model PersonCar {
+  name: String!
+}
+```
 
-console.log({
-  mapping
-});
+### Account type
+
+```graphql
+type Account {
+  id: ID!
+  name: String!
+  money: Float!
+  type: AccountType
+}
+```
+
+### AccountType enum
+
+```graphql
+enum AccountType {
+  saving
+  credit
+}
+```
+
+### Color enum
+
+```graphql
+enum Color {
+  red
+  green
+  blue
+}
 ```
 
 ## Supporting transforms (decorators)
@@ -111,13 +214,23 @@ Allow supplying an extra `config` object with meta data for directives to be mer
 }
 ```
 
-### Using meta data in JSON schema
+Simply pass the `config` object as second argument
+
+```js
+const types = buildTypes(schema, config);
+
+console.log({
+  types
+});
+```
+
+### Using meta data embedded in JSON schema
 
 [StackOverflow: json-schema-additional-metadata](https://stackoverflow.com/questions/42357200/json-schema-additional-metadata)
 
 "You don't have to do anything special to use additional metadata keywords. You can just use them. In JSON Schema it is not an error to include undefined keywords."
 
-So the decorators can also be supplied via a `graphql` entry directly in the JSON schema as follows:
+The GraphQL decorators can also be supplied via a `graphql` entry directly in the JSON schema as follows:
 
 ```js
 properties: {
@@ -134,7 +247,7 @@ properties: {
 }
 ```
 
-You can also include `decorators` entry directly as follows:
+You can alternatively use the `decorators` entry directly as follows.
 
 ```js
 properties: {
@@ -149,9 +262,12 @@ properties: {
 }
 ```
 
-## Customization
+You might want to use decorators for other purposes as well (for other generators).
+We recommend namespacing `decorators` under `graphql` for large projects that heavily relies on a schema driven development approach.
 
-You can pass an extra configuration object with specific rules for ES mapping properties that will be merged into the resulting mapping.
+## Type customization
+
+The configuration object can take type mappings that will be used in the generated types.
 
 ```js
 const config = {
@@ -161,10 +277,12 @@ const config = {
       json: "JSON" // to use custom JSON scalar
     }
   }
+  decorators: {
+    // ...
+  }
 };
 
-const { buildMapping } = require("json-schema-to-es-mapping");
-const mapping = buildMapping(schema, config);
+const types = buildTypes(schema, config);
 ```
 
 ## Supporting Scalars
