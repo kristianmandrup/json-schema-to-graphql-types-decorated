@@ -1,15 +1,20 @@
 const {MappingBaseType} = require('./base')
 
-const {$buildTypes} = require('../')
+const {resolveSchema} = require('../schema')
 
-function isObject(obj) {
+function isObjectType(obj) {
   return obj === Object(obj);
 }
 
+function isObject(obj) {
+  return obj.type === 'object'
+}
+
 function toObject(obj) {
-  return isObject(obj.type) && MappingObject
+  return isObject(obj) && MappingObject
     .create(obj)
-    .convert()
+    .resolveNested()
+    .shape
 }
 
 // Allow recursive schema
@@ -19,10 +24,36 @@ class MappingObject extends MappingBaseType {
     this.properties = this.value.properties
   }
 
-  convert() {
-    return this.properties
-      ? $buildTypes(this.value, this.config)
+  get baseType() {
+    return 'object'
+  }
+
+  static create(obj) {
+    return new MappingObject(obj)
+  }
+
+  get is() {
+    return 'type-ref'
+  }
+
+  // TODO: how to determine this?
+  get ref() {
+    return 'embedded'
+  }
+
+  get typeDef() {
+    return {is: 'type'}
+  }
+
+  get schema() {
+    return this.value
+  }
+
+  resolveNested() {
+    this.properties
+      ? resolveSchema(this.schema, this.config, this.built)
       : this.error(`${this.key}: missing object properties`)
+    return this
   }
 }
 

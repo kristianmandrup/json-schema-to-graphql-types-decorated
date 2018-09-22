@@ -1,4 +1,4 @@
-const {MappingBaseType} = require('./base')
+const {MappingPrimitive} = require('./primitive')
 
 function isBoolean(type) {
   return type === 'boolean'
@@ -7,10 +7,10 @@ function isBoolean(type) {
 function toBoolean(obj) {
   return isBoolean(obj.type) && MappingBoolean
     .create(obj)
-    .convert()
+    .shape
 }
 
-class MappingBoolean extends MappingBaseType {
+class MappingBoolean extends MappingPrimitive {
   get baseType() {
     return 'boolean'
   }

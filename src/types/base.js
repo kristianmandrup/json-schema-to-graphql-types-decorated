@@ -1,8 +1,16 @@
 class ConvertMappingSchemaError extends Error {}
 const Decorators = require('./Decorators')
+const PropType = require('./prop-type')
 
 class MappingBaseType {
-  constructor({name, key, type, value, config}) {
+  constructor({
+    name,
+    key,
+    type,
+    value,
+    config,
+    built
+  }) {
     this.key = key
     this.clazz = name
     this._type = type
@@ -10,6 +18,7 @@ class MappingBaseType {
     this.format = value.format
     this.required = value.required
     this.config = config
+    this.built = built
     const $graphql = this.value.graphql || {}
     const ownDecorators = $graphql.decorators || $graphql
     const decorators = config.decorators || {}
@@ -22,6 +31,41 @@ class MappingBaseType {
     if (value.generated) {
       this._specialType = 'ID!'
     }
+
+    this.type = this.createPropType()
+  }
+
+  get shape() {
+    const shape = {
+      name: this.name,
+      is: this.is,
+      decorators: this.decorators,
+      type: this.type,
+      pretty: this.pretty
+    }
+    if (this.required) {
+      shape.required = this.required
+    }
+
+    if (this.multiple) {
+      shape.multiple = this.multiple
+    }
+
+    if (this.ref) {
+      shape.ref = this.ref
+    }
+  }
+
+  get ref() {
+    return undefined
+  }
+
+  get multiple() {
+    return false
+  }
+
+  get name() {
+    return this.key
   }
 
   get baseType() {
@@ -36,46 +80,30 @@ class MappingBaseType {
     return this.configEntry.type || this._specialType
   }
 
+  createPropType() {
+    return new PropType({configType: this.configType, baseType: this.baseType, required: this.required})
+  }
+
   get $decorators() {
-    return new Decorators(this._decorators).toString()
+    this.decs = this.decs || new Decorators(this._decorators)
+    return this.decs
   }
 
   get decorators() {
-    return this.$decorators
-      ? ' ' + this.$decorators
-      : ''
+    const $decorators = this.$decorators
+    return {keys: $decorators.keys, validKeys: this.$decorators.goodKeys, pretty: $decorators.pretty}
   }
 
   toString() {
-    return `${this.key}: ${this.dataType}${this.decorators}`
+    return `${this.name}: ${this.type.fullDecorated}`
   }
 
-  get req() {
-    return this.required
-      ? '!'
-      : ''
-  }
-
-  get dataType() {
-    return this._normalizedDataType
-  }
-
-  get _normalizedDataType() {
-    return this
-      ._dataType
-      .replace('!!', '!')
-  }
-
-  get _dataType() {
-    return [this.type, this.req].join('')
-  }
-
-  get type() {
-    return this.configType || this.baseType
-  }
-
-  convert() {
+  get pretty() {
     return this.toString()
+  }
+
+  traverseNested() {
+    return this
   }
 
   message() {

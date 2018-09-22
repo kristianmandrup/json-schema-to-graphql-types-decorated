@@ -1,4 +1,4 @@
-const {MappingBaseType} = require('./base')
+const {MappingPrimitive} = require('./primitive')
 
 function isInteger(type) {
   return type === 'integer'
@@ -11,10 +11,10 @@ function isNumber(type) {
 function toNumber(obj) {
   return isNumber(obj.type) && MappingNumber
     .create(obj)
-    .convert()
+    .shape
 }
 
-class MappingNumber extends MappingBaseType {
+class MappingNumber extends MappingPrimitive {
   get baseType() {
     if (this.value.format === 'float') 
       return 'Float'

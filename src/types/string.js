@@ -1,4 +1,4 @@
-const {MappingBaseType} = require('./base')
+const {MappingPrimitive} = require('./primitive')
 
 function isString(type) {
   return type === 'string'
@@ -7,10 +7,11 @@ function isString(type) {
 function toString(obj) {
   return isString(obj.type) && MappingString
     .create(obj)
-    .convert()
+    .shape
+
 }
 
-class MappingString extends MappingBaseType {
+class MappingString extends MappingPrimitive {
   get baseType() {
     return this._types.string || 'String'
   }

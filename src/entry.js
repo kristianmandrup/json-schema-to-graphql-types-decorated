@@ -1,22 +1,13 @@
-const {
-  toString,
-  toNumber,
-  toBoolean,
-  toArray,
-  toObject,
-  toMixed,
-  toDate,
-  toEnum
-} = require('./types')
-
 class SchemaEntryError extends Error {}
 
 class SchemaEntry {
-  constructor({name, key, value, config}) {
+  constructor({name, key, value, config, built}) {
     this.key = key
+    this.name = name
     this.value = value
     this.config = config
     this.type = value.type
+    this.built = built
     this.types = {
       string: toString,
       number: toNumber,
@@ -56,7 +47,7 @@ class SchemaEntry {
   }
 
   get obj() {
-    return {key: this.key, value: this.value, type: this.type, config: this.config}
+    return {key: this.key, value: this.value, type: this.type, config: this.config, built: this.built}
   }
 
   string(config) {
@@ -96,3 +87,14 @@ module.exports = {
   SchemaEntryError,
   SchemaEntry
 }
+
+const {
+  toString,
+  toNumber,
+  toBoolean,
+  toArray,
+  toObject,
+  toMixed,
+  toDate,
+  toEnum
+} = require('./types')

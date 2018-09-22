@@ -1,4 +1,4 @@
-const {buildTypes} = require('../');
+const {buildTypes} = require('./build');
 
 const schema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -111,15 +111,13 @@ const schema = {
 }
 
 describe('converts JSON schema to GraphQL types with decorators', () => {
-  let types
-  beforeEach(() => {
-    types = buildTypes(schema)
-  })
+  const {types, enums} = buildTypes(schema)
+  console.log({types, enums})
 
   describe('Person type', () => {
     const Person = types['Person']
 
-    test('is named Person', () => {
+    test.only('is named Person', () => {
       console.log({Person})
       expect(Person.name).toEqual('Person')
     })
@@ -131,17 +129,22 @@ describe('converts JSON schema to GraphQL types with decorators', () => {
 
     test('has an name property of type String', () => {
       expect(Person.props.name.is).toEqual('primitive')
-      expect(Person.props.name.type).toEqual('String')
+      expect(Person.props.name.type.basic).toEqual('String')
+      expect(Person.props.name.type.full).toEqual('String!')
+      expect(Person.props.name.type.fullDecorated).toEqual('String! @connection(name: "UserNames")')
+      expect(Person.props.name.pretty).toEqual(`name: String! @connection(name: "UserNames")`)
     })
 
     test('has an money property of type Float', () => {
       expect(Person.props.money.is).toEqual('primitive')
-      expect(Person.props.money.type).toEqual('Float')
+      expect(Person.props.money.type.basic).toEqual('Float')
+      expect(Person.props.money.type.full).toEqual('Float')
+      expect(Person.props.money.type.fullDecorated).toEqual('Float')
     })
 
     test('has an money property of type Float', () => {
       expect(Person.props.age.is).toEqual('primitive')
-      expect(Person.props.age.type).toEqual('Int')
+      expect(Person.props.age.type.basic).toEqual('Int')
       expect(Person.props.age.required).toBe(true)
     })
 
@@ -150,18 +153,22 @@ describe('converts JSON schema to GraphQL types with decorators', () => {
       expect(Person.props.accounts.multiple).toBe(true)
       expect(Person.props.accounts.ref).toBe('reference')
       expect(Person.props.accounts.definition).toBe('account')
-      expect(Person.props.accounts.type).toEqual('[Account]')
+      expect(Person.props.accounts.type.basic).toEqual('Account')
+      expect(Person.props.accounts.type.full).toEqual('[Account]')
+      expect(Person.props.accounts.type.fullDecorated).toEqual('[Account]')
     })
 
     test('has an numberOfChildren property of type [Int]', () => {
       expect(Person.props.numberOfChildren.is).toEqual('primitive')
       expect(Person.props.numberOfChildren.multiple).toBe(true)
-      expect(Person.props.numberOfChildren.type).toEqual('[Int]')
+      expect(Person.props.numberOfChildren.type.basic).toEqual('Int')
+      expect(Person.props.numberOfChildren.type.full).toEqual('[Int]')
     })
 
     test('has a car property of type PersonCar', () => {
       expect(Person.props.car.is).toEqual('type-ref')
       expect(Person.props.car.ref).toEqual('embedded')
+      expect(Person.props.accounts.multiple).toBeFalsy()
       expect(Person.props.car.type).toEqual('PersonCar')
     })
 

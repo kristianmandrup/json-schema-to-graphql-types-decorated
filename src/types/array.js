@@ -1,13 +1,18 @@
 const {MappingBaseType} = require('./base')
 
-function isArray(type) {
-  return type === 'array'
+function isObjectType(obj) {
+  return obj === Object(obj);
+}
+
+function isArray(obj) {
+  return obj.type === 'array' // && isObject(obj.items)
 }
 
 function toArray(obj) {
-  return isArray(obj.type) && MappingArray
+  return isArray(obj) && MappingArray
     .create(obj)
-    .convert()
+    .resolveNested()
+    .shape
 }
 
 class MappingArray extends MappingBaseType {
@@ -15,10 +20,32 @@ class MappingArray extends MappingBaseType {
     return this._type
   }
 
+  get is() {
+    return 'type-ref'
+  }
+
+  // TODO: how to determine this?
+  get ref() {
+    return 'embedded'
+  }
+
+  get definition() {
+    return this.type
+  }
+
+  get multiple() {
+    return true
+  }
+
   constructor(obj) {
     super(obj)
     this.items = this.value.items
     this._type = this.items.type
+  }
+
+  // TODO
+  resolveNested() {
+    return this
   }
 
   static create(obj) {

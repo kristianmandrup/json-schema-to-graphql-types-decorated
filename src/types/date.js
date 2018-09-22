@@ -16,12 +16,16 @@ function isDate(obj) {
 function toDate(obj) {
   return isDate(obj) && MappingDate
     .create(obj)
-    .convert()
+    .shape
 }
 
 class MappingDate extends MappingBaseType {
   get baseType() {
     return this._types.date || 'Date'
+  }
+
+  is() {
+    return 'scalar'
   }
 
   static create(obj) {

@@ -8,13 +8,17 @@ function isEnum(obj) {
 function toEnum(obj) {
   return isEnum(obj) && MappingEnum
     .create(obj)
-    .convert()
+    .shape
 }
 
 // TODO
 class MappingEnum extends MappingBaseType {
   get baseType() {
     return this.key
+  }
+
+  get is() {
+    return 'enum'
   }
 
   static create(obj) {
