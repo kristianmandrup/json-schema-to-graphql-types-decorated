@@ -41,18 +41,21 @@ const properties = {
     "items": [
       {
         "type": "number",
+        name: "childCount",
         "enum": [0, 1, 2]
       }
     ]
   },
   "favoriteCoulor": {
     "description": "Colors liked",
-    "name": "color",
     "type": "string",
-    "items": {
-      "type": "number",
-      "enum": ["red", "green", "blue"]
-    }
+    "items": [
+      {
+        "type": "number",
+        name: "color",
+        "enum": ["red", "green", "blue"]
+      }
+    ]
   },
   "car": {
     "description": "Car owned",
@@ -74,6 +77,7 @@ describe('resolveSchema', () => {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "$id": "http://example.com/person.schema.json",
       "title": "Person",
+      name: 'Person',
       "description": "A person",
       "type": "object",
       graphql: {
@@ -113,27 +117,72 @@ describe('resolveSchema', () => {
       expect(resolved).toBeTruthy()
     })
 
-    describe('enums', () => {})
+    describe('enums', () => {
+      const keys = Object.keys(enums)
 
-    describe('types', () => {})
+      test('has Color enum', () => {
+        expect(enums.Color).toBeTruthy()
+      })
+
+      test('has ChildCount enum', () => {
+        expect(enums.ChildCount).toBeTruthy()
+      })
+    })
+
+    describe('types', () => {
+      const keys = Object.keys(enums)
+
+      test('has Person type', () => {
+        expect(types.Person).toBeTruthy()
+      })
+
+      test('has Account type', () => {
+        expect(types.Account).toBeTruthy()
+      })
+
+      test('has Car type', () => {
+        expect(types.Car).toBeTruthy()
+      })
+    })
   })
 
-  describe('propsToOutput', () => {
+  describe.only('propsToOutput', () => {
     const result = propsToOutput({properties})
 
-    test('props', () => {
+    describe('props', () => {
       const {props} = result
-      expect(props).toBeTruthy()
+
+      test('has props', () => {
+        expect(props).toBeTruthy()
+      })
     })
 
-    test('enums', () => {
+    describe('enums', () => {
       const {enums} = result
-      expect(enums).toBeTruthy()
+
+      test('has enums', () => {
+        expect(enums).toBeTruthy()
+      })
     })
 
-    test('types', () => {
+    describe.only('types', () => {
       const {types} = result
-      expect(types).toBeTruthy()
+
+      test('has types', () => {
+        expect(types).toBeTruthy()
+      })
+
+      test('has Person type', () => {
+        expect(types.Person).toBeTruthy()
+      })
+
+      test('has Account type', () => {
+        expect(types.Account).toBeTruthy()
+      })
+
+      test('has Car type', () => {
+        expect(types.Car).toBeTruthy()
+      })
     })
   })
 })
