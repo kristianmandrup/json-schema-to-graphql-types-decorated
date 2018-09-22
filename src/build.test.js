@@ -110,15 +110,19 @@ const schema = {
   "required": ["name"]
 }
 
-describe('converts JSON schema to GraphQL types with decorators', () => {
+describe.skip('converts JSON schema to GraphQL types with decorators', () => {
   const {types, enums} = buildTypes(schema)
   console.log({types, enums})
 
   describe('Person type', () => {
     const Person = types['Person']
+    console.log({Person})
 
-    test.only('is named Person', () => {
-      console.log({Person})
+    test('is defined', () => {
+      expect(Person).toBeDefined()
+    })
+
+    test('is named Person', () => {
       expect(Person.name).toEqual('Person')
     })
 

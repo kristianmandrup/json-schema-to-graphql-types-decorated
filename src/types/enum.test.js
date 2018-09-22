@@ -13,13 +13,13 @@ const $enum = {
 
 describe('toEnum', () => {
 
-  test('invalid type', () => {
-    const shape = toDate({key: 'bad', value: $enum.invalid})
-    expect(shape.valid).toBe(false)
+  test.only('invalid type', () => {
+    const shape = toEnum({key: 'bad', value: $enum.invalid})
+    expect(shape).toBeFalsy()
   })
 
   test('valid type with enum-ref and values', () => {
-    const shape = toDate({key: 'colors', value: $enum.colors})
+    const shape = toEnum({key: 'colors', value: $enum.colors})
     expect(shape.valid).toBe(true)
     expect(shape.is).toEqual('enum-ref')
     expect(shape.values).toEqual(['red', 'blue'])

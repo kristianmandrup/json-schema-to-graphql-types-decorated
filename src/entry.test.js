@@ -1,4 +1,4 @@
-import {SchemaEntry} from './entry'
+const {SchemaEntry} = require('./entry')
 
 const built = {
   enums: {},
@@ -27,9 +27,11 @@ const config = {}
 
 describe('SchemaEntry', () => {
   describe('primitive: number', () => {
-    const entry = new SchemaEntry({name: 'age', value: values.number, config, built})
+    const value = values.number
+    const name = 'age'
+    const entry = new SchemaEntry({name, value, config, built})
 
-    test('name', () => {
+    test.only('name', () => {
       expect(entry.name).toEqual('age')
     })
 
@@ -47,7 +49,8 @@ describe('SchemaEntry', () => {
 
   describe('primitive: array', () => {
     const name = 'personality'
-    const entry = new SchemaEntry({name, value: values.array, config, built})
+    const value = values.array
+    const entry = new SchemaEntry({name, value, config, built})
 
     test('name', () => {
       expect(entry.name).toEqual(name)

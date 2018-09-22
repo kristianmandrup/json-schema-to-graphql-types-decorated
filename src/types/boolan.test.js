@@ -23,9 +23,9 @@ const config = {}
 
 describe('toBoolean', () => {
 
-  test('invalid type', () => {
+  test.only('invalid type', () => {
     const shape = toBoolean({key: 'bad', value: booleans.invalid})
-    expect(shape.valid).toBe(false)
+    expect(shape).toBeFalsy()
   })
 
   describe('basic type', () => {

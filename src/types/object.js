@@ -49,15 +49,21 @@ class MappingObject extends MappingBaseType {
     return this.value
   }
 
-  resolveNested() {
+  get valid() {
     this.properties
+      ? true
+      : false
+  }
+
+  resolveNested() {
+    this.valid
       ? this._resolve()
-      : this._resolveErr()
+      : this._noResolve()
     return this
   }
 
-  _resolveErr() {
-    this.error(`${this.key}: missing object properties`)
+  _noResolve() {
+    // this.error(`${this.key}: missing object properties`)
   }
 
   _resolve() {

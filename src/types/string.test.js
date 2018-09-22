@@ -11,9 +11,11 @@ const strings = {
   }
 }
 
+const config = {}
+
 describe('toString', () => {
-  test('invalid type', () => {
-    const shape = toNumber({key: 'invalid', value: strings.invalid})
+  test.only('invalid type', () => {
+    const shape = toString({key: 'invalid', value: strings.invalid})
     expect(shape).toBeFalsy()
   })
 
@@ -33,7 +35,7 @@ describe('toString', () => {
 })
 
 describe('configured with custom scalar type', () => {
-  const shape = toBoolean({
+  const shape = toString({
     key: 'greeting',
     value: strings.greeting
   }, {

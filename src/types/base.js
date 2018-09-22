@@ -35,6 +35,10 @@ class MappingBaseType {
     this.type = this.createPropType()
   }
 
+  get valid() {
+    return true
+  }
+
   get shape() {
     const shape = {
       name: this.name,

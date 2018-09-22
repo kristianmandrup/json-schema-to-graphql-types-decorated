@@ -11,8 +11,10 @@ const numbers = {
   }
 }
 
+const config = {}
+
 describe('toNumber', () => {
-  test('invalid type', () => {
+  test.only('invalid type', () => {
     const shape = toNumber({key: 'invalid', value: numbers.invalid})
     expect(shape).toBeFalsy()
   })
@@ -33,7 +35,7 @@ describe('toNumber', () => {
 })
 
 describe('configured with custom scalar type', () => {
-  const shape = toBoolean({
+  const shape = toNumber({
     key: 'age',
     value: numbers.age
   }, {

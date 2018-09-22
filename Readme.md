@@ -368,7 +368,21 @@ Thanks to the power of directives and Apollo Link, you’ll (soon) be able to re
 
 Uses [jest](jestjs.io/) for unit testing.
 
-Currently not well tested. Please help add more test coverage :)
+Please help add more test coverage :)
+
+### Run tests in watch mode
+
+Also lets you filter which tests to run (press `p`)
+
+```bash
+$ npm run test:watch
+```
+
+### Run all tests
+
+```bash
+$ npm run test
+```
 
 ## TODO
 

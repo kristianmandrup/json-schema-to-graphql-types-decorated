@@ -23,16 +23,16 @@ const dates = {
   }
 }
 
-describe('toEnum', () => {
+describe('toObject', () => {
 
-  test('invalid type', () => {
-    const shape = toDate({key: 'invalid', value: dates.invalid})
+  test.only('invalid type', () => {
+    const shape = toObject({key: 'invalid', value: dates.invalid})
     expect(shape).toBeFalsy()
   })
 
   test('bad type', () => {
     try {
-      const shape = toDate({key: 'bad', value: dates.bad})
+      const shape = toObject({key: 'bad', value: dates.bad})
       expect(shape.valid).toBe(false)
     } catch (err) {
       console.log(err)
@@ -41,7 +41,7 @@ describe('toEnum', () => {
 
   describe('nested', () => {
     test('valid type with type-ref', () => {
-      const shape = toDate({key: 'colors', value: dates.colors})
+      const shape = toObject({key: 'colors', value: dates.colors})
       expect(shape.valid).toBe(true)
       expect(shape.is).toEqual('type-ref')
       expect(shape.ref).toEqual('embedded')

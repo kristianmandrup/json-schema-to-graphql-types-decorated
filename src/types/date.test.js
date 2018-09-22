@@ -10,15 +10,17 @@ const dates = {
   }
 }
 
+const config = {}
+
 describe('toDate', () => {
 
-  test('invalid type', () => {
+  test.only('invalid type', () => {
     const shape = toDate({key: 'invalid', value: dates.invalid})
     expect(shape).toBeFalsy()
   })
 
   describe('basic type', () => {
-    const shape = toBoolean({key: 'birthDate', value: dates.birthDate, config})
+    const shape = toDate({key: 'birthDate', value: dates.birthDate, config})
 
     test('is valid type', () => {
       expect(shape.valid).toBe(true)
@@ -33,7 +35,7 @@ describe('toDate', () => {
 })
 
 describe('configured with custom scalar type', () => {
-  const shape = toBoolean({
+  const shape = toDate({
     key: 'birthDate',
     value: dates.birthDate
   }, {
