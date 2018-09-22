@@ -1,5 +1,7 @@
 # JSON Schema to GraphQL types with decorators
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/kristianmandrup/json-schema-to-graphql-types-decorated.svg)](https://greenkeeper.io/)
+
 Convert JSON schema to GraphQL types (string) including GraphQL transforms/directives (decoratots).
 
 ## Quick start
