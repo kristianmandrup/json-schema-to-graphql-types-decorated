@@ -6,21 +6,34 @@ const numbers = {
   },
   age: {
     "description": "Number of years lived",
-    type: 'number',
+    type: 'integer',
     default: 18
   }
 }
 
 const config = {}
 
+const createParams = (key, value, config = {}) => {
+  return {key, value, type: value.type, config}
+}
+
+const $create = (key, value, config) => {
+  return toNumber(createParams(key, value, config))
+}
+
+const create = (key, config) => {
+  return $create(key, numbers[key], config)
+}
+
 describe('toNumber', () => {
-  test.only('invalid type', () => {
-    const shape = toNumber({key: 'invalid', value: numbers.invalid})
-    expect(shape).toBeFalsy()
+  test('invalid type', () => {
+    const str = create('invalid')
+    expect(str).toBeFalsy()
   })
 
   describe('basic type', () => {
-    const shape = toNumber({key: 'age', value: numbers.age, config})
+    const str = create('age')
+    const {shape} = str
 
     test('is valid type', () => {
       expect(shape.valid).toBe(true)
@@ -29,22 +42,21 @@ describe('toNumber', () => {
     test('creates basic type shape', () => {
       expect(shape.name).toEqual('age')
       expect(shape.is).toEqual('primitive')
-      expect(shape.type.basic).toEqual('Float')
+      expect(shape.type.basic).toEqual('Int')
     })
   })
 })
 
 describe('configured with custom scalar type', () => {
-  const shape = toNumber({
-    key: 'age',
-    value: numbers.age
-  }, {
+  const config = {
     _meta_: {
       types: {
-        number: 'BigInt'
+        int: 'BigInt'
       }
     }
-  })
+  }
+  const str = create('age', config)
+  const {shape} = str
 
   test('creates type with custom scalar date', () => {
     expect(shape.name).toEqual('age')

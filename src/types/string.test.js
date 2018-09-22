@@ -17,18 +17,18 @@ const createParams = (key, value, config = {}) => {
   return {key, value, type: value.type, config}
 }
 
-const create = (key, value, config) => {
-  return toString(createParams(key, value, config))
+const create = (key, config) => {
+  return toString(createParams(key, string[key], config))
 }
 
 describe('toString', () => {
   test('invalid type', () => {
-    const str = create('invalid', strings.invalid)
+    const str = create('invalid')
     expect(str).toBeFalsy()
   })
 
   describe('basic type', () => {
-    const str = create('greeting', strings.greeting)
+    const str = create('greeting')
     const {shape} = str
 
     test('is valid type', () => {
@@ -51,7 +51,7 @@ describe('configured with custom scalar type', () => {
       }
     }
   }
-  const str = create('greeting', strings.greeting, config)
+  const str = create('greeting', config)
   const {shape} = str
 
   test('creates type with custom scalar date', () => {

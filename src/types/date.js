@@ -22,7 +22,7 @@ class MappingDate extends MappingBaseType {
     return this._types.date || 'Date'
   }
 
-  is() {
+  get is() {
     return 'scalar'
   }
 

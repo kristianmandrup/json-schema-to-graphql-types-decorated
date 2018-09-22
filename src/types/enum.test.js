@@ -1,25 +1,41 @@
 const {toEnum} = require('./enum')
 
-const $enum = {
+const enums = {
   invalid: {
     type: 'number'
   },
   colors: {
     "description": "Bank accounts",
-    type: 'enum',
+    type: 'string',
     enum: ['red', 'blue']
   }
 }
 
+const config = {}
+
+const createParams = (key, value, config = {}) => {
+  return {key, value, type: value.type, config}
+}
+
+const $create = (key, value, config) => {
+  return toEnum(createParams(key, value, config))
+}
+
+const create = (key, config) => {
+  return $create(key, enums[key], config)
+}
+
 describe('toEnum', () => {
 
-  test.only('invalid type', () => {
-    const shape = toEnum({key: 'bad', value: $enum.invalid})
+  test('invalid type', () => {
+    const str = create('invalid')
+    const {shape} = str
     expect(shape).toBeFalsy()
   })
 
   test('valid type with enum-ref and values', () => {
-    const shape = toEnum({key: 'colors', value: $enum.colors})
+    const str = create('colors')
+    const {shape} = str
     expect(shape.valid).toBe(true)
     expect(shape.is).toEqual('enum-ref')
     expect(shape.values).toEqual(['red', 'blue'])

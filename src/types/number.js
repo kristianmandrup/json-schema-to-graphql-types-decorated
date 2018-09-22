@@ -14,6 +14,13 @@ function toNumber(obj) {
 
 class MappingNumber extends MappingPrimitive {
   get baseType() {
+    const type = this._baseType
+    const key = type.toLowerCase()
+    const custom = this._types[key]
+    return custom || type
+  }
+
+  get _baseType() {
     if (this.value.format === 'float') 
       return 'Float'
 
