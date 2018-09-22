@@ -12,7 +12,7 @@ class MappingBaseType {
     this.config = config
     const $graphql = this.value.graphql || {}
     const ownDecorators = $graphql.decorators || $graphql
-    const decorators = config.decorators
+    const decorators = config.decorators || {}
     this.classDecorators = (decorators[type] || {})[key]
     this.propDecorators = decorators[key]
     this._decorators = ownDecorators || this.classDecorators || this.propDecorators

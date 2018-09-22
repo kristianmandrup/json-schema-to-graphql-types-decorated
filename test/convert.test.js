@@ -13,6 +13,11 @@ test('converts JSON schema to ElasticSearch Mapping Schema', () => {
       }
     },
     "properties": {
+      id: {
+        type: "string",
+        generated: true,
+        unique: true
+      },
       "name": {
         "description": "Name of the person",
         "type": "string",
@@ -46,6 +51,6 @@ test('converts JSON schema to ElasticSearch Mapping Schema', () => {
 
   const types = buildTypes(json)
   console.log(types)
-  const expectedTypes = `type Person {\n  name: String! @connection(name: "UserNames")\n  age: Int!\n  money: Float\n  accounts: [Account]\n}\n`
+  const expectedTypes = `type Person {\n  id: ID!\n  name: String! @connection(name: "UserNames")\n  age: Int!\n  money: Float\n  accounts: [Account]\n}\n`
   expect(types).toEqual(expectedTypes)
 });
