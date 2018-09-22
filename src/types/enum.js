@@ -6,9 +6,7 @@ function isEnum(obj) {
 }
 
 function toEnum(obj) {
-  return isEnum(obj) && MappingEnum
-    .create(obj)
-    .shape
+  return isEnum(obj) && MappingEnum.create(obj)
 }
 
 // TODO

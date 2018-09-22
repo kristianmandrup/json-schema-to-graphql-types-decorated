@@ -5,10 +5,7 @@ function isString(type) {
 }
 
 function toString(obj) {
-  return isString(obj.type) && MappingString
-    .create(obj)
-    .shape
-
+  return isString(obj.type) && MappingString.create(obj)
 }
 
 class MappingString extends MappingPrimitive {

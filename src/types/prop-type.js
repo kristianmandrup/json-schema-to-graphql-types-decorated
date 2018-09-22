@@ -1,19 +1,25 @@
 module.exports = class PropType {
-  constructor({configType, baseType, required, decorators}) {
-    this.configType = configType
+  constructor({overrideType, baseType, required, decorators}) {
+    this.overrideType = overrideType
     this.baseType = baseType
     this.required = required
     this.decorators = decorators
   }
 
   get shape() {
-    return {
-      type: {
-        basic: this.type,
-        full: this.dataType,
-        fullDecorated: `${this.dataType}${this.decorators.pretty}`
-      }
-    }
+    return {basic: this.type, full: this.full, fullDecorated: this.fullDecorated}
+  }
+
+  get full() {
+    return this.dataType
+  }
+
+  get fullDecorated() {
+    return `${this
+      .dataType}${this
+      .decorators
+      .pretty}`
+      .trim()
   }
 
   get req() {
@@ -37,6 +43,6 @@ module.exports = class PropType {
   }
 
   get type() {
-    return this.configType || this.baseType
+    return this.overrideType || this.baseType
   }
 }

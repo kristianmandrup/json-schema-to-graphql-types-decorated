@@ -43,9 +43,16 @@ class SchemaEntry {
       number: this.number(config),
       boolean: this.boolean(config)
     }
-    const primitive = map.array || map.date || map.string || map.number
+    const prim = map.array || map.date || map.string || map.number
+    const primitive = prim
+      ? prim.shape
+      : undefined
     const type = map.object
+      ? map.object.shape
+      : undefined
     const $enum = map.enum
+      ? map.enum
+      : undefined
     return {enum: $enum, primitive, type}
   }
 

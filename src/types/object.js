@@ -14,7 +14,6 @@ function toObject(obj) {
   return isObject(obj) && MappingObject
     .create(obj)
     .resolveNested()
-    .shape
 }
 
 // Allow recursive schema

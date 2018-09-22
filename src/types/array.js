@@ -12,7 +12,6 @@ function toArray(obj) {
   return isArray(obj) && MappingArray
     .create(obj)
     .resolveNested()
-    .shape
 }
 
 class MappingArray extends MappingBaseType {
@@ -41,6 +40,10 @@ class MappingArray extends MappingBaseType {
     super(obj)
     this.items = this.value.items
     this._type = this.items.type
+  }
+
+  get valid() {
+    return Array.isArray(this.items)
   }
 
   // TODO

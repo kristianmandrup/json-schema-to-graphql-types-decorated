@@ -13,14 +13,23 @@ const strings = {
 
 const config = {}
 
+const createParams = (key, value, config = {}) => {
+  return {key, value, type: value.type, config}
+}
+
+const create = (key, value, config) => {
+  return toString(createParams(key, value, config))
+}
+
 describe('toString', () => {
-  test.only('invalid type', () => {
-    const shape = toString({key: 'invalid', value: strings.invalid})
-    expect(shape).toBeFalsy()
+  test('invalid type', () => {
+    const str = create('invalid', strings.invalid)
+    expect(str).toBeFalsy()
   })
 
   describe('basic type', () => {
-    const shape = toString({key: 'greeting', value: strings.greeting, config})
+    const str = create('greeting', strings.greeting)
+    const {shape} = str
 
     test('is valid type', () => {
       expect(shape.valid).toBe(true)
@@ -35,18 +44,26 @@ describe('toString', () => {
 })
 
 describe('configured with custom scalar type', () => {
-  const shape = toString({
-    key: 'greeting',
-    value: strings.greeting
-  }, {
+  const config = {
     _meta_: {
       types: {
         string: 'MyString'
       }
     }
-  })
+  }
+  const str = create('greeting', strings.greeting, config)
+  const {shape} = str
 
   test('creates type with custom scalar date', () => {
+    expect(str.overrideType).toEqual(undefined)
+    expect(str._meta).toEqual({
+      types: {
+        string: 'MyString'
+      }
+    })
+    expect(str.baseType).toEqual('MyString')
+    expect(str._types).toEqual({string: 'MyString'})
+
     expect(shape.name).toEqual('greeting')
     expect(shape.is).toEqual('primitive')
     expect(shape.type.basic).toEqual('MyString')

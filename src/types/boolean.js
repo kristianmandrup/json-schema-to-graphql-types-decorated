@@ -5,14 +5,13 @@ function isBoolean(type) {
 }
 
 function toBoolean(obj) {
-  return isBoolean(obj.type) && MappingBoolean
-    .create(obj)
-    .shape
+  console.log(obj)
+  return isBoolean(obj.type) && MappingBoolean.create(obj)
 }
 
 class MappingBoolean extends MappingPrimitive {
   get baseType() {
-    return 'boolean'
+    return 'Boolean'
   }
 
   static create(obj) {

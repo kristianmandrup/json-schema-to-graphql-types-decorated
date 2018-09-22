@@ -14,9 +14,7 @@ function isDate(obj) {
 }
 
 function toDate(obj) {
-  return isDate(obj) && MappingDate
-    .create(obj)
-    .shape
+  return isDate(obj) && MappingDate.create(obj)
 }
 
 class MappingDate extends MappingBaseType {

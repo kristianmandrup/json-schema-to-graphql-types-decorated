@@ -3,14 +3,16 @@ const Decorators = require('./Decorators')
 const PropType = require('./prop-type')
 
 class MappingBaseType {
-  constructor({
-    name,
-    key,
-    type,
-    value,
-    config,
-    built
-  }) {
+  constructor(configuration) {
+    const {
+      name,
+      key,
+      type,
+      value,
+      config,
+      built
+    } = configuration
+    this.configuration = configuration
     this.key = key
     this.clazz = name
     this._type = type
@@ -31,8 +33,12 @@ class MappingBaseType {
     if (value.generated) {
       this._specialType = 'ID!'
     }
+  }
 
-    this.type = this.createPropType()
+  get type() {
+    return this
+      .createPropType()
+      .shape
   }
 
   get valid() {
@@ -45,19 +51,16 @@ class MappingBaseType {
       is: this.is,
       decorators: this.decorators,
       type: this.type,
-      pretty: this.pretty
-    }
-    if (this.required) {
-      shape.required = this.required
-    }
-
-    if (this.multiple) {
-      shape.multiple = this.multiple
+      pretty: this.pretty,
+      valid: Boolean(this.valid),
+      required: Boolean(this.required),
+      multiple: Boolean(this.multiple)
     }
 
     if (this.ref) {
       shape.ref = this.ref
     }
+    return shape
   }
 
   get ref() {
@@ -76,16 +79,16 @@ class MappingBaseType {
     this.error('default mapping type must be specified by subclass')
   }
 
-  get configEntry() {
-    return this.config[this.key] || {}
+  get configType() {
+    return this._types[this.name]
   }
 
-  get configType() {
-    return this.configEntry.type || this._specialType
+  get overrideType() {
+    return this.configType || this._specialType
   }
 
   createPropType() {
-    return new PropType({configType: this.configType, baseType: this.baseType, required: this.required})
+    return new PropType({overrideType: this.overrideType, baseType: this.baseType, decorators: this.decorators, required: this.required})
   }
 
   get $decorators() {

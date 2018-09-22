@@ -9,9 +9,7 @@ function isNumber(type) {
 }
 
 function toNumber(obj) {
-  return isNumber(obj.type) && MappingNumber
-    .create(obj)
-    .shape
+  return isNumber(obj.type) && MappingNumber.create(obj)
 }
 
 class MappingNumber extends MappingPrimitive {
