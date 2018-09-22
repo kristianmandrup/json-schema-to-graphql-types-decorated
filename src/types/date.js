@@ -1,16 +1,12 @@
 const {MappingBaseType} = require('./base')
 
-// TODO: check if has any date format
-function hasDateContraint(obj) {
-  return false
-}
-
-function hasDateType(type) {
-  return ['date', 'date-time', 'time'].find(t => t === type)
+function hasDateFormat(format) {
+  return format === 'date-time'
 }
 
 function isDate(obj) {
-  return (obj.type === 'string' && hasDateContraint(obj)) || hasDateType(obj.type)
+  const format = obj.format || obj.value.format
+  return obj.type === 'string' && hasDateFormat(format)
 }
 
 function toDate(obj) {

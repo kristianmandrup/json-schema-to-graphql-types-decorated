@@ -20,6 +20,9 @@ const camelize = (text, {
   separator = '_',
   cap = true
 } = {}) => {
+  if (typeof text !== 'string') {
+    throw new Error(`Text to camelize must be a string, was: ${typeof text}`)
+  }
   const words = text.split(separator)
   const camelized = [
     words[0],

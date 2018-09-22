@@ -1,10 +1,12 @@
 class SchemaEntryError extends Error {}
 class SchemaEntry {
   constructor(obj) {
-    const {name, key, value, type} = obj
+    const {name, key, value, format, type} = obj
     const $type = type || value.type
+    const $format = format || value.format
     this.obj = obj
     this.obj.type = $type
+    this.obj.format = $format
     this.type = $type
     this.key = key
     this.name = name

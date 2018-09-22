@@ -6,7 +6,8 @@ const dates = {
   },
   birthDate: {
     "description": "Bank accounts",
-    type: 'date-time'
+    type: 'string',
+    format: 'date-time'
   }
 }
 
@@ -31,9 +32,10 @@ describe('toDate', () => {
     expect(str).toBeFalsy()
   })
 
-  describe('basic type', () => {
+  describe.only('basic type', () => {
     const str = create('birthDate')
     const {shape} = str
+    console.log({str, shape})
 
     test('is valid type', () => {
       expect(shape.valid).toBe(true)

@@ -1,5 +1,3 @@
-const {SchemaEntry} = require('./entry');
-
 function isObject(type) {
   return type && type === 'object'
 }
@@ -85,6 +83,9 @@ function createSchemaEntry(obj) {
 }
 
 module.exports = {
+  propsToOutput,
   resolveSchema,
   createSchemaEntry
 }
+
+const {SchemaEntry} = require('./entry');

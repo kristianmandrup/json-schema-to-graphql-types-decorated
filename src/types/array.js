@@ -11,17 +11,29 @@ function toArray(obj) {
     .resolveNested()
 }
 
+function hasDateFormat(format) {
+  return format === 'date-time'
+}
+
+function isDate(obj) {
+  return obj.type === 'string' && hasDateFormat(obj.format)
+}
+
 class MappingArray extends MappingBaseType {
   get baseType() {
     return this.refType
   }
 
   get refType() {
+    if (!this.valid) {
+      const msg = 'items. Must be an array of valid type definitions for the property'
+      this.error('Array', `Invalid ${msg}`)
+    }
     return camelize(this.normalizeType(this._refType))
   }
 
   get typeMap() {
-    return {integer: 'Int', 'date-time': 'Date', time: 'Date', boolean: 'Bool', number: 'Float'}
+    return {integer: 'Int', 'date-time': 'Date', boolean: 'Bool', number: 'Float'}
   }
 
   normalizeType(typeName) {
@@ -53,7 +65,10 @@ class MappingArray extends MappingBaseType {
   }
 
   get resolveSimpleItemType() {
-    const type = this.item.type
+    let type = this.item.type
+    if (isDate(type)) {
+      type = 'date'
+    }
     return typeof type === 'string'
       ? type
       : type.name

@@ -4,7 +4,7 @@ const {Decorators} = require('./decorators')
 
 class MappingBaseType {
   constructor(configuration) {
-    const {
+    let {
       name,
       key,
       type,
@@ -12,6 +12,7 @@ class MappingBaseType {
       config,
       built
     } = configuration
+    config = config || {}
     this.configuration = configuration
     this.key = key
     this.clazz = name
@@ -47,6 +48,7 @@ class MappingBaseType {
 
   get shape() {
     const shape = {
+      clazz: this.clazz,
       name: this.name,
       is: this.is,
       decorators: this.decorators,

@@ -25,7 +25,7 @@ class MappingObject extends MappingBaseType {
 
   get baseType() {
     const name = this._baseType
-    return camelize(name)
+    return name && camelize(name)
   }
 
   get _baseType() {
