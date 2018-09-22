@@ -44,15 +44,9 @@ class SchemaEntry {
       boolean: this.boolean(config)
     }
     const prim = map.array || map.date || map.string || map.number
-    const primitive = prim
-      ? prim.shape
-      : undefined
-    const type = map.object
-      ? map.object.shape
-      : undefined
-    const $enum = map.enum
-      ? map.enum
-      : undefined
+    const primitive = (prim || {}).shape
+    const type = (map.object || {}).shape
+    const $enum = (map.enum || {}).shape
     return {enum: $enum, primitive, type}
   }
 

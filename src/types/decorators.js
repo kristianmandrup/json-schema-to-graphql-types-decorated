@@ -9,6 +9,11 @@ module.exports = class Decorators {
     this.validKeys = config.validKeys || []
   }
 
+  // TODO: filter only good keys
+  get config() {
+    return this.decorators
+  }
+
   hasProps(props) {
     return isObject(props) && Object
       .keys(props)
