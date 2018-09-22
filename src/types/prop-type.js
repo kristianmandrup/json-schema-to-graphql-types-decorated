@@ -1,9 +1,11 @@
-module.exports = class PropType {
+class PropType {
   constructor({overrideType, baseType, required, decorators}) {
     this.overrideType = overrideType
     this.baseType = baseType
     this.required = required
-    this.decorators = decorators
+    this.decoration = decorators
+      ? decorators.pretty
+      : ''
   }
 
   get shape() {
@@ -17,8 +19,7 @@ module.exports = class PropType {
   get fullDecorated() {
     return `${this
       .dataType}${this
-      .decorators
-      .pretty}`
+      .decoration}`
       .trim()
   }
 
@@ -45,4 +46,8 @@ module.exports = class PropType {
   get type() {
     return this.overrideType || this.baseType
   }
+}
+
+module.exports = {
+  PropType
 }

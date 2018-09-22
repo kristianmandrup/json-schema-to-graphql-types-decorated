@@ -2,7 +2,7 @@ function isObject(obj) {
   return obj === Object(obj);
 }
 
-module.exports = class Decorators {
+class Decorators {
   constructor(decorators = {}, config = {}) {
     this.decorators = decorators
     this.keys = Object.keys(this.decorators)
@@ -34,25 +34,37 @@ module.exports = class Decorators {
     }
     return this
       .keys
-      .filter(key => this.validKeys.indexOf(key) >= 0)
+      .filter(key => this.validKeys.length > 0
+        ? this.validKeys.indexOf(key) >= 0
+        : true)
+  }
+
+  get noKeyValidation() {
+    return !this.validKeys || this.validKeys.length === 0
   }
 
   get hasValidKeys() {
-    if (!this.validKeys || this.validKeys.length === 0) 
+    if (this.noKeyValidation) 
       return true
     return !hasInvalidKey
   }
 
   get hasInvalidKey() {
-    return this
-      .keys
-      .find(key => !this.validKeys.indexOf(key) >= 0)
+    if (this.noKeyValidation) 
+      return false
+    return Boolean(this.keys.find(key => !this.validKeys.indexOf(key) >= 0))
   }
 
   get pretty() {
     return this.hasValidKeys
       ? ' ' + this.toString()
       : ''
+  }
+
+  get trimmed() {
+    return this
+      .pretty
+      .trim()
   }
 
   toString() {
@@ -71,7 +83,7 @@ module.exports = class Decorators {
 
   propsToString(props = {}) {
     return this.hasProps(props)
-      ? `(${this._propsToString(props)})`
+      ? `({${this._propsToString(props)}})`
       : ''
   }
 
@@ -80,7 +92,7 @@ module.exports = class Decorators {
     return keys.map(key => {
       const value = props[key]
       return `${key}: ${this._valueToStr(value)}`
-    })
+    }).join(' ')
   }
 
   _valueToStr(value) {
@@ -90,4 +102,8 @@ module.exports = class Decorators {
       return value
     return `"${value}"`
   }
+}
+
+module.exports = {
+  Decorators
 }

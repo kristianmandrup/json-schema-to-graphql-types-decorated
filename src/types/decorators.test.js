@@ -12,8 +12,8 @@ const config = {
   }
 }
 
-describe.skip('Decorators', () => {
-  const decs = new Decorators({decorators, config})
+describe('Decorators', () => {
+  const decs = new Decorators(decorators, config)
 
   test('hasProps(props)', () => {})
 
@@ -46,6 +46,10 @@ describe.skip('Decorators', () => {
   })
 
   test('pretty', () => {
-    expect(decs.pretty).toEqual('@defaultValue({value: "hello"})')
+    expect(decs.pretty).toEqual(' @defaultValue({value: "hello"})')
+  })
+
+  test('trimmed', () => {
+    expect(decs.trimmed).toEqual('@defaultValue({value: "hello"})')
   })
 })
