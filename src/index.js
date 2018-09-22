@@ -9,11 +9,28 @@ const defaults = {
   }
 }
 
-function buildTypes(schema, config = {}, withTypeMarker = true) {
-  const typeMarker = withTypeMarker
-    ? 'type '
-    : ''
+const render = prefix => (body) => `${prefix} ${body}`
 
+const rendered = {}
+const built = {
+  enums: [],
+  types: []
+}
+
+function buildTypes(schema, config = {}) {
+  $buildAll(schema, config, built, false)
+  rendered.props = built
+    .props
+    .map(renderType)
+
+  rendered.enums = built
+    .props
+    .map(render('enum'))
+
+  return [rendered.props, rendered.enums].join('\n')
+}
+
+function $buildAll(schema, config = {}, built = {}, inner = true) {
   const indent = config.indentFn || defaults.indentFn
   let {type, properties} = schema
   if (isObject(type)) {
@@ -26,8 +43,23 @@ function buildTypes(schema, config = {}, withTypeMarker = true) {
         ? config.createIndent(config.indent)
         : indent
       const propsOutput = propsToOutput({properties, name, config})
-      const postFix = indent(indentation)
-      return `${typeMarker}${name} {${propsOutput}${postFix}}\n`
+      if (propsOutput.props) {
+        const postFix = indent(indentation)
+        const type = `${name} {${propsOutput.props}${postFix}}\n`
+        built
+          .types
+          .push(type)
+      }
+      if (propsOutput.enums) {
+        built
+          .enums
+          .concat(propsOutput.enums)
+      }
+      if (propsOutput.types) {
+        built
+          .types
+          .concat(propsOutput.types)
+      }
     }
   }
   throw new Error('invalid schema')
@@ -55,17 +87,27 @@ function propsToOutput({
   name,
   config = {}
 }) {
+  const props = []
+  const enums = []
+  const types = []
+
   const propsList = Object
     .keys(properties)
     .map((key) => {
       const value = properties[key]
       const entry = propToSchemaEntry({name, key, value, config})
-      return entry
+      entry.primitive && props.push(entry.primitive)
+      entry.enum && enums.push(entry.enum)
+      entry.type && typess.push(entry.type)
     })
 
   const indent = config.indentFn
   const indentation = indent(config.indent + 1)
-  return indentation + propsList.join(indentation)
+  return {
+    props: indentation + props.join(indentation),
+    enums,
+    types
+  }
 }
 
 function propToSchemaEntry({
@@ -86,6 +128,7 @@ const types = require('./types')
 
 module.exports = {
   buildTypes,
+  $buildTypes,
   createSchemaEntry,
   SchemaEntry,
   SchemaEntryError,

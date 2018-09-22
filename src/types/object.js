@@ -1,6 +1,6 @@
 const {MappingBaseType} = require('./base')
 
-const {buildMapping} = require('../')
+const {$buildTypes} = require('../')
 
 function isObject(obj) {
   return obj === Object(obj);
@@ -21,7 +21,7 @@ class MappingObject extends MappingBaseType {
 
   convert() {
     return this.properties
-      ? buildMapping(this.value, this.config, false)
+      ? $buildTypes(this.value, this.config)
       : this.error(`${this.key}: missing object properties`)
   }
 }

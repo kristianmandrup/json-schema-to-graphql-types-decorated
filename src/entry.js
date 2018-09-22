@@ -5,7 +5,8 @@ const {
   toArray,
   toObject,
   toMixed,
-  toDate
+  toDate,
+  toEnum
 } = require('./types')
 
 class SchemaEntryError extends Error {}
@@ -39,7 +40,19 @@ class SchemaEntry {
     if (!this.isValidSchema()) 
       this.error('Not a valid schema')
     const config = this.obj
-    return this.array(config) || this.object(config) || this.date(config) || this.string(config) || this.number(config) || this.boolean(config)
+    const map = {
+      array: this.array(config),
+      object: this.object(config),
+      enum: this.enum(config),
+      date: this.date(config),
+      string: this.string(config),
+      number: this.number(config),
+      boolean: this.boolean(config)
+    }
+    const primitive = map.array || map.date || map.string || map.number
+    const type = map.object
+    const $enum = map.enum
+    return {enum: $enum, primitive, type}
   }
 
   get obj() {
@@ -56,6 +69,10 @@ class SchemaEntry {
 
   boolean(config) {
     return toBoolean(config || this.obj)
+  }
+
+  enum(config) {
+    return toEnum(config || this.obj)
   }
 
   array(config) {

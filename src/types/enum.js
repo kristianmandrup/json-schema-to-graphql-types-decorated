@@ -2,7 +2,7 @@ const {MappingBaseType} = require('./base')
 
 // TODO
 function isEnum(obj) {
-  return false
+  return Array.isArray(obj.enum)
 }
 
 function toEnum(obj) {
@@ -14,11 +14,32 @@ function toEnum(obj) {
 // TODO
 class MappingEnum extends MappingBaseType {
   get baseType() {
-    return 'enum'
+    return this.key
   }
 
   static create(obj) {
     return new MappingEnum(obj)
+  }
+
+  get parts() {
+    return {
+      prop: this.toString(),
+      enum: this.toEnum()
+    }
+  }
+
+  toEnum() {
+    return `enum ${this
+      .key} {\n  ${this
+      .toEnumList()}\n}\n`
+  }
+
+  toEnumList() {
+    return this
+      .value
+      .enum
+      .map(val => val)
+      .join('\n  ')
   }
 }
 
