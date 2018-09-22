@@ -29,9 +29,9 @@ describe('SchemaEntry', () => {
   describe('primitive: number', () => {
     const value = values.number
     const name = 'age'
-    const entry = new SchemaEntry({name, value, config, built})
-
-    test.only('name', () => {
+    const entry = new SchemaEntry({name, key: name, value, config, built})
+    console.log({entry})
+    test('name', () => {
       expect(entry.name).toEqual('age')
     })
 
@@ -39,11 +39,21 @@ describe('SchemaEntry', () => {
       expect(entry.value).toEqual(value)
     })
 
-    test('toEntry', () => {
+    describe('toEntry', () => {
       const result = entry.toEntry()
-      expect(result.enum).toBeFalsy()
-      expect(result.primitive).toBeTruthy()
-      expect(result.type).toBeFalsy()
+
+      test('result object', () => {
+        console.log({result})
+        expect(result.enum).toBeFalsy()
+        expect(result.primitive).toBeTruthy()
+        expect(result.type).toBeFalsy()
+      })
+
+      test('primitive', () => {
+        const {primitive} = result || {}
+        expect(result.primitive.name).toEqual('age')
+        expect(result.primitive.type.basic).toEqual('Float')
+      })
     })
   })
 

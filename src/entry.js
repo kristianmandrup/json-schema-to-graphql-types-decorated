@@ -1,14 +1,25 @@
 class SchemaEntryError extends Error {}
 class SchemaEntry {
   constructor(obj) {
-    const {name, key, value, config, built} = obj
+    const {
+      name,
+      key,
+      value,
+      type,
+      config,
+      built
+    } = obj
+    const $type = type || value.type
     this.obj = obj
+    this.obj.type = $type
     this.key = key
     this.name = name
     this.value = value
     this.config = config
-    this.type = value.type
+    this.type = $type
     this.built = built
+
+    console.log(obj)
 
     this.types = {
       string: toString,
@@ -16,8 +27,7 @@ class SchemaEntry {
       boolean: toBoolean,
       array: toArray,
       object: toObject,
-      date: toDate,
-      mixed: toMixed
+      date: toDate
     }
   }
 
@@ -32,16 +42,17 @@ class SchemaEntry {
   toEntry() {
     if (!this.isValidSchema()) 
       this.error('Not a valid schema')
-    const config = this.obj
     const map = {
-      array: this.array(config),
-      object: this.object(config),
-      enum: this.enum(config),
-      date: this.date(config),
-      string: this.string(config),
-      number: this.number(config),
-      boolean: this.boolean(config)
+      array: this.array(),
+      object: this.object(),
+      enum: this.enum(),
+      date: this.date(),
+      string: this.string(),
+      number: this.number(),
+      boolean: this.boolean()
     }
+    console.log({map})
+
     const prim = map.array || map.date || map.string || map.number
     const primitive = (prim || {}).shape
     const type = (map.object || {}).shape
@@ -93,7 +104,6 @@ const {
   toBoolean,
   toArray,
   toObject,
-  toMixed,
   toDate,
   toEnum
 } = require('./types')
