@@ -92,7 +92,7 @@ class MappingBaseType {
   }
 
   createPropType() {
-    return new PropType({overrideType: this.overrideType, baseType: this.baseType, decorators: this.decorators, required: this.required})
+    return new PropType({overrideType: this.overrideType, baseType: this.baseType, isArray: true, decorators: this.decorators, required: this.required})
   }
 
   get $decorators() {

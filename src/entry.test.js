@@ -30,20 +30,11 @@ describe('SchemaEntry', () => {
     const value = values.number
     const name = 'age'
     const entry = new SchemaEntry({name, key: name, value, config, built})
-    console.log({entry})
-    test('name', () => {
-      expect(entry.name).toEqual('age')
-    })
-
-    test('value', () => {
-      expect(entry.value).toEqual(value)
-    })
 
     describe('toEntry', () => {
       const result = entry.toEntry()
 
       test('result object', () => {
-        console.log({result})
         expect(result.enum).toBeFalsy()
         expect(result.primitive).toBeTruthy()
         expect(result.type).toBeFalsy()
@@ -58,44 +49,47 @@ describe('SchemaEntry', () => {
   })
 
   describe('primitive: array', () => {
-    const name = 'personality'
+    const name = 'scores'
     const value = values.array
-    const entry = new SchemaEntry({name, value, config, built})
+    const entry = new SchemaEntry({name, key: name, value, config, built})
 
-    test('name', () => {
-      expect(entry.name).toEqual(name)
-    })
-
-    test('value', () => {
-      expect(entry.value).toEqual(value)
-    })
-
-    test('toEntry', () => {
+    describe('toEntry', () => {
       const result = entry.toEntry()
-      expect(result.enum).toBeFalsy()
-      expect(result.primitive).toBeTruthy()
-      expect(result.type).toBeFalsy()
+
+      test('result object', () => {
+        expect(result.enum).toBeFalsy()
+        expect(result.primitive).toBeTruthy()
+        expect(result.type).toBeFalsy()
+      })
+
+      test('primitive', () => {
+        const {primitive} = result || {}
+        console.log({primitive})
+        expect(result.primitive.name).toEqual('scores')
+        expect(result.primitive.type.full).toEqual('[Int]')
+      })
     })
   })
 
   describe('enum: colors', () => {
     describe('primitive: number', () => {
       const name = 'colors'
-      const entry = new SchemaEntry({name, value: values.enum, config, built})
+      const entry = new SchemaEntry({name, key: name, value: values.enum, config, built})
 
-      test('name', () => {
-        expect(entry.name).toEqual(name)
-      })
-
-      test('value', () => {
-        expect(entry.value).toEqual(value)
-      })
-
-      test('toEntry', () => {
+      describe('toEntry', () => {
         const result = entry.toEntry()
-        expect(result.enum).toBeTruthy()
-        expect(result.primitive).toBeFalsy()
-        expect(result.type).toBeFalsy()
+
+        test('result object', () => {
+          expect(result.$enum).toBeTruthy()
+          expect(result.primitive).toBeFalsy()
+          expect(result.type).toBeFalsy()
+        })
+
+        test('enum', () => {
+          const {$enum} = result || {}
+          expect($enum.name).toEqual('colors')
+          expect($enum.values).toEqual(['good', 'bad'])
+        })
       })
     })
   })

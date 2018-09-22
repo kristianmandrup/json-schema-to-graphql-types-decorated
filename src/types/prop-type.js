@@ -1,7 +1,8 @@
 class PropType {
-  constructor({overrideType, baseType, required, decorators}) {
+  constructor({overrideType, baseType, isArray, required, decorators}) {
     this.overrideType = overrideType
     this.baseType = baseType
+    this.isArray = isArray
     this.required = required
     this.decoration = decorators
       ? decorators.pretty
@@ -9,7 +10,7 @@ class PropType {
   }
 
   get shape() {
-    return {basic: this.type, full: this.full, fullDecorated: this.fullDecorated}
+    return {basic: this._simpleType, full: this.full, fullDecorated: this.fullDecorated}
   }
 
   get full() {
@@ -44,6 +45,16 @@ class PropType {
   }
 
   get type() {
+    return this.isArray
+      ? this._arrayType
+      : this._simpleType
+  }
+
+  get _arrayType() {
+    return `[${this._simpleType}]`
+  }
+
+  get _simpleType() {
     return this.overrideType || this.baseType
   }
 }

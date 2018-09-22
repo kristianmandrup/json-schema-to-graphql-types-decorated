@@ -17,7 +17,15 @@ class MappingArray extends MappingBaseType {
   }
 
   get refType() {
-    return camelize(this._refType)
+    return camelize(this.normalizeType(this._refType))
+  }
+
+  get typeMap() {
+    return {integer: 'Int', 'date-time': 'Date'}
+  }
+
+  normalizeType(typeName) {
+    return this.typeMap[typeName.toLowerCase()] || typeName
   }
 
   get _refType() {
@@ -80,10 +88,6 @@ class MappingArray extends MappingBaseType {
 
   static create(obj) {
     return new MappingArray(obj)
-  }
-
-  get dataType() {
-    return `[${this.type}]${this.req}`
   }
 }
 

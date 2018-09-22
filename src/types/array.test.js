@@ -61,6 +61,7 @@ describe('toArray', () => {
       expect(shape.is).toEqual('type-ref')
       expect(shape.ref).toEqual('embedded')
       expect(shape.type.basic).toEqual('Account')
+      expect(shape.type.full).toEqual('[Account]')
     })
   })
 
@@ -73,6 +74,7 @@ describe('toArray', () => {
       expect(shape.ref).toEqual('reference')
       expect(shape.refType).toEqual('Account')
       expect(shape.type.basic).toEqual('Account')
+      expect(shape.type.full).toEqual('[Account]')
     })
   })
 })

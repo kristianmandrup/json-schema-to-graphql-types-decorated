@@ -12,15 +12,8 @@ class SchemaEntry {
     const $type = type || value.type
     this.obj = obj
     this.obj.type = $type
-    this.key = key
-    this.name = name
-    this.value = value
-    this.config = config
     this.type = $type
-    this.built = built
-
-    console.log(obj)
-
+    console.log({$type})
     this.types = {
       string: toString,
       number: toNumber,
@@ -54,10 +47,13 @@ class SchemaEntry {
     console.log({map})
 
     const prim = map.array || map.date || map.string || map.number
-    const primitive = (prim || {}).shape
+    let primitive = (prim || {}).shape
     const type = (map.object || {}).shape
     const $enum = (map.enum || {}).shape
-    return {enum: $enum, primitive, type}
+    if ($enum && primitive) {
+      primitive = undefined
+    }
+    return {$enum, primitive, type}
   }
 
   string(config) {
