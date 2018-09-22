@@ -160,31 +160,46 @@ describe('converts JSON schema to GraphQL types with decorators', () => {
     })
 
     test('has an id property of type ID', () => {
+      expect(Account.props.id.is).toEqual('primitive')
       expect(Account.props.id.type).toEqual('ID')
     })
 
     test('has an name property of type String', () => {
+      expect(Account.props.name.is).toEqual('primitive')
       expect(Account.props.name.type).toEqual('String')
     })
 
     test('has an money property of type Float', () => {
+      expect(Account.props.money.is).toEqual('primitive')
       expect(Account.props.money.type).toEqual('Float')
     })
 
     test('has an inline type enum of type AccountType', () => {
+      expect(Account.props.type.is).toEqual('type')
+      expect(Account.props.type.ref).toEqual('embedded')
       expect(Account.props.type.type).toEqual('AccountType')
+    })
+
+    test('pretty prints Account type', () => {
+      const pretty = `type Account {\n  id: ID!\n  name: String!\n  money: Float\n  type: AccountType\n}\n`
+      expect(Account.toString()).toEqual(pretty)
     })
   })
 
   describe('PersonCar type', () => {
     test('is named Account', () => {
-      expect(Car.name).toEqual('Car')
+      expect(Car.name).toEqual('PersonCar')
     })
 
     test('has an name property of type String', () => {
-      expect(Car.props.name.type).toEqual('String')
+      expect(Car.props.name.is).toEqual('primitive')
+      expect(Car.props.name.type.toString()).toEqual('String')
     })
 
+    test('pretty prints PersonCar type', () => {
+      const pretty = `type PersonCar {\n  name: String!\n}\n`
+      expect(Car.toString()).toEqual(pretty)
+    })
   })
 
   describe('Color enum', () => {
@@ -202,13 +217,30 @@ describe('converts JSON schema to GraphQL types with decorators', () => {
       expect(Color.values.names).toEqual(['red', 'green', 'blue'])
     })
 
+    test('pretty prints Color type', () => {
+      const pretty = `enum Color {\n  red\n  green\n  blue\n}\n`
+      expect(Color.toString()).toEqual(pretty)
+    })
   })
 
   describe('AccountType enum', () => {
     const AccountType = enums['AccountType']
 
+    test('is named AccountType', () => {
+      expect(AccountType.name).toEqual('AccountType')
+    })
+
+    test('is an enum', () => {
+      expect(AccountType.is).toEqual('enum')
+    })
+
     test('has values red, green and blue', () => {
       expect(AccountType.values.names).toEqual(['saving', 'credit'])
+    })
+
+    test('pretty prints AccountType type', () => {
+      const pretty = `enum AccountType {\n  saving\n  credit\n}\n`
+      expect(AccountType.toString()).toEqual(pretty)
     })
   })
 })
