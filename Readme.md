@@ -169,11 +169,14 @@ const mapping = buildMapping(schema, config);
 
 ## Supporting Scalars
 
-[Date-as-a-scalar](https://www.apollographql.com/docs/graphql-tools/scalars.html#Date-as-a-scalar)
+Please see [GraphQL scalar type and its input and result coercion](https://medium.com/graphql-mastery/graphql-scalars-and-enums-part-1-built-in-scalars-overview-and-application-4a85f841698f)
 
-You can add your own scalar types via the config. We assume you are using `Date` by default.
+### Date scalar
 
-Sample date scalar: [graphql-iso-date](https://www.npmjs.com/package/graphql-iso-date)
+- [Date as a scalar](https://www.apollographql.com/docs/graphql-tools/scalars.html#Date-as-a-scalar)
+- [graphql-iso-date](https://www.npmjs.com/package/graphql-iso-date)
+
+You can customize the output to use your own scalar types via `config._meta_.types`. The builder (generator) currently assumes you are using the `Date` scalar by default.
 
 ## GraphQL transforms
 
@@ -248,6 +251,20 @@ Thanks to the power of directives and Apollo Link, you’ll (soon) be able to re
 Uses [jest](jestjs.io/) for unit testing.
 
 Currently not well tested. Please help add more test coverage :)
+
+## TODO
+
+Add support for `enum` type, see [How to design GraphQL queries and mutations: enum type](https://medium.com/graphql-mastery/how-to-design-graphql-mutations-and-queries-part-2-enums-ebb01613832)
+
+The enum type is the second type in the GraphQL specification that can be used as a primitive value.
+
+```js
+enum TaskStateEnum {
+  assigned
+  unassigned
+  inProgress
+}
+```
 
 ## Author
 

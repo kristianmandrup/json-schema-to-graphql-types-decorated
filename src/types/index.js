@@ -5,6 +5,7 @@ const {MappingNumber, toNumber} = require('./number')
 const {MappingObject, toObject} = require('./object')
 const {MappingString, toString} = require('./string')
 const {MappingDate, toDate} = require('./date')
+const {MappingEnum, toEnum} = require('./enum')
 
 module.exports = {
   MappingArray,
@@ -19,6 +20,8 @@ module.exports = {
   toString,
   MappingDate,
   toDate,
+  MappingEnum,
+  toEnum,
   MappingBaseType,
   ConvertMappingSchemaError
 }
