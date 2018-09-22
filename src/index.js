@@ -13,8 +13,8 @@ const render = prefix => (body) => `${prefix} ${body}`
 
 const rendered = {}
 const built = {
-  enums: [],
-  types: []
+  enums: {},
+  types: {}
 }
 
 function buildTypes(schema, config = {}) {
@@ -46,19 +46,23 @@ function $buildAll(schema, config = {}, built = {}, inner = true) {
       if (propsOutput.props) {
         const postFix = indent(indentation)
         const type = `${name} {${propsOutput.props}${postFix}}\n`
-        built
-          .types
-          .push(type)
+
+        propsOutput.types[name] = type
       }
+
       if (propsOutput.enums) {
-        built
+        propsOutput
           .enums
-          .concat(propsOutput.enums)
+          .map($enum => {
+            built.enums[$enum.name] = $enum
+          })
       }
       if (propsOutput.types) {
-        built
+        propsOutput
           .types
-          .concat(propsOutput.types)
+          .map(type => {
+            built.types[type.name] = type
+          })
       }
     }
   }
