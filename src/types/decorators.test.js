@@ -1,18 +1,18 @@
 const {Decorators} = require('./decorators')
 
-const decorators = {
-  defaultValue: {
-    value: 'hello'
-  }
-}
-
 const config = {
   targets: {
     prisma: true
   }
 }
 
-describe('Decorators', () => {
+describe('Decorators: object', () => {
+  const decorators = {
+    defaultValue: {
+      value: 'hello'
+    }
+  }
+
   const decs = new Decorators(decorators, config)
 
   test('hasProps(props)', () => {})
@@ -51,5 +51,17 @@ describe('Decorators', () => {
 
   test('trimmed', () => {
     expect(decs.trimmed).toEqual('@defaultValue({value: "hello"})')
+  })
+})
+
+describe('Decorators: bool', () => {
+  const decorators = {
+    unique: true
+  }
+
+  const decs = new Decorators(decorators, config)
+
+  test('trimmed', () => {
+    expect(decs.trimmed).toEqual('@unique')
   })
 })
