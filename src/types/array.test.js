@@ -8,24 +8,28 @@ const arrays = {
     "description": "Bank accounts",
     "type": "array",
     name: 'accounts',
-    "items": {
-      "type": {
-        "name": "Account",
-        properties: {
-          "name": {
-            "type": "string"
+    "items": [
+      {
+        "type": {
+          "name": "Account",
+          properties: {
+            "name": {
+              "type": "string"
+            }
           }
         }
       }
-    }
+    ]
   },
   defRef: {
     "description": "Bank accounts",
     "type": "array",
     name: 'accounts',
-    "items": {
-      "$ref": "#/definitions/account"
-    }
+    "items": [
+      {
+        "$ref": "#/definitions/account"
+      }
+    ]
   }
 }
 
@@ -36,7 +40,7 @@ const createParams = (key, value, config = {}) => {
 }
 
 const $create = (key, value, config) => {
-  return toBoolean(createParams(key, value, config))
+  return toArray(createParams(key, value, config))
 }
 
 const create = (key, config) => {
@@ -44,7 +48,7 @@ const create = (key, config) => {
 }
 
 describe('toArray', () => {
-  test.only('invalid type', () => {
+  test('invalid type', () => {
     const arr = create('invalid')
     expect(arr).toBeFalsy()
   })
@@ -52,7 +56,6 @@ describe('toArray', () => {
   describe('item type is embedded', () => {
     const arr = create('embedded')
     const {shape} = arr
-
     test('creates shape with embedded type', () => {
       expect(shape.name).toEqual('accounts')
       expect(shape.is).toEqual('type-ref')
@@ -68,6 +71,7 @@ describe('toArray', () => {
       expect(shape.name).toEqual('accounts')
       expect(shape.is).toEqual('type-ref')
       expect(shape.ref).toEqual('reference')
+      expect(shape.refType).toEqual('Account')
       expect(shape.type.basic).toEqual('Account')
     })
   })

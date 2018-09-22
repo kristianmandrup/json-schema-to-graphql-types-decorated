@@ -60,6 +60,10 @@ class MappingBaseType {
     if (this.ref) {
       shape.ref = this.ref
     }
+    if (this.refType) {
+      shape.refType = this.refType
+    }
+
     return shape
   }
 
@@ -72,7 +76,7 @@ class MappingBaseType {
   }
 
   get name() {
-    return this.key
+    return this.value.name || this.key
   }
 
   get baseType() {
@@ -125,6 +129,21 @@ class MappingBaseType {
     const errMSg = `[${name}] ${msg}`
     console.log(errMSg)
     throw new ConvertMappingSchemaError(errMSg)
+  }
+
+  // TODO: lookup reference and determine name there!
+  get resolveRefName() {
+    const paths = this
+      .reference
+      .split('/')
+    return paths[paths.length - 1]
+  }
+
+  // TODO: how to determine this?
+  get ref() {
+    return this.reference
+      ? 'reference'
+      : 'embedded'
   }
 }
 

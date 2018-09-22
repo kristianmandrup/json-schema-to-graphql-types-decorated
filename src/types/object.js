@@ -1,5 +1,5 @@
 const {MappingBaseType} = require('./base')
-const {camelize, isObjectType} = require('./utils')
+const {camelize} = require('./utils')
 
 function isObject(obj) {
   return obj.type === 'object'
@@ -19,6 +19,10 @@ class MappingObject extends MappingBaseType {
     this.reference = this.value.$ref
   }
 
+  get refType() {
+    return this.baseType
+  }
+
   get baseType() {
     const name = this._baseType
     return camelize(name)
@@ -30,27 +34,12 @@ class MappingObject extends MappingBaseType {
       : this.name
   }
 
-  // TODO: lookup reference and determine name there!
-  get resolveRefName() {
-    const paths = this
-      .reference
-      .split('/')
-    return paths[paths.length - 1]
-  }
-
   static create(obj) {
     return new MappingObject(obj)
   }
 
   get is() {
     return 'type-ref'
-  }
-
-  // TODO: how to determine this?
-  get ref() {
-    return this.reference
-      ? 'reference'
-      : 'embedded'
   }
 
   get typeDef() {
