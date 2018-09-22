@@ -1,19 +1,13 @@
 class SchemaEntryError extends Error {}
 class SchemaEntry {
   constructor(obj) {
-    const {
-      name,
-      key,
-      value,
-      type,
-      config,
-      built
-    } = obj
+    const {name, key, value, type} = obj
     const $type = type || value.type
     this.obj = obj
     this.obj.type = $type
     this.type = $type
-    console.log({$type})
+    this.key = key
+    this.name = name
     this.types = {
       string: toString,
       number: toNumber,
@@ -44,8 +38,6 @@ class SchemaEntry {
       number: this.number(),
       boolean: this.boolean()
     }
-    console.log({map})
-
     const prim = map.array || map.date || map.string || map.number
     let primitive = (prim || {}).shape
     const type = (map.object || {}).shape

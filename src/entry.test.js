@@ -64,7 +64,6 @@ describe('SchemaEntry', () => {
 
       test('primitive', () => {
         const {primitive} = result || {}
-        console.log({primitive})
         expect(result.primitive.name).toEqual('scores')
         expect(result.primitive.type.full).toEqual('[Int]')
       })
