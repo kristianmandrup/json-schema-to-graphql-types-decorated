@@ -16,10 +16,10 @@ test('converts JSON schema to ElasticSearch Mapping Schema', () => {
       "name": {
         "description": "Name of the person",
         "type": "string",
-        graphql: {
-          decorators: {
-            connection: {
-              name: 'UserNames'
+        "graphql": {
+          "decorators": {
+            "connection": {
+              "name": "UserNames"
             }
           }
         }
@@ -46,6 +46,6 @@ test('converts JSON schema to ElasticSearch Mapping Schema', () => {
 
   const types = buildTypes(json)
   console.log(types)
-  const expectedTypes = `type Person {\n  name: String! @connection(name: 'UserNames')\n  age: Int!\n  money: Float\n  accounts: [Account]\n}\n`
+  const expectedTypes = `type Person {\n  name: String! @connection(name: "UserNames")\n  age: Int!\n  money: Float\n  accounts: [Account]\n}\n`
   expect(types).toEqual(expectedTypes)
 });

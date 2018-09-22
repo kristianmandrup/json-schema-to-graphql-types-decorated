@@ -45,6 +45,6 @@ module.exports = class Decorators {
       return value
     if (!isNaN(value)) 
       return value
-    return `'${value}'`
+    return `"${value}"`
   }
 }

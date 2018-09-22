@@ -12,7 +12,7 @@ class MappingBaseType {
     this.config = config
     const $graphql = this.value.graphql || {}
     const ownDecorators = $graphql.decorators || $graphql
-    const decorators = (config._meta_ || {}).decorators || {}
+    const decorators = config.decorators
     this.classDecorators = (decorators[type] || {})[key]
     this.propDecorators = decorators[key]
     this._decorators = ownDecorators || this.classDecorators || this.propDecorators
@@ -22,7 +22,6 @@ class MappingBaseType {
     if (value.generated) {
       this._specialType = 'ID!'
     }
-
   }
 
   get baseType() {
