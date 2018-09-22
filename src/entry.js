@@ -1,5 +1,4 @@
 class SchemaEntryError extends Error {}
-
 class SchemaEntry {
   constructor(obj) {
     const {name, key, value, config, built} = obj

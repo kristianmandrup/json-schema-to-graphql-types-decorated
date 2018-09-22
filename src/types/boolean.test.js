@@ -2,7 +2,7 @@ const {toBoolean} = require('./boolean')
 
 const booleans = {
   invalid: {
-    "type": "string"
+    "type": "booling"
   },
   withDefault: {
     "name": 'married',
@@ -32,13 +32,13 @@ const create = (key, config) => {
 describe('toBoolean', () => {
 
   test('invalid type', () => {
-    const str = create('invalid')
-    expect(str).toBeFalsy()
+    const bool = create('invalid')
+    expect(bool).toBeFalsy()
   })
 
   describe('basic type', () => {
-    const str = create('basic')
-    const {shape} = str
+    const bool = create('basic')
+    const {shape} = bool
 
     test('is valid type', () => {
       expect(shape.valid).toBe(true)
@@ -57,8 +57,8 @@ describe('toBoolean', () => {
         prisma: true
       }
     }
-    const str = create('withDefault', config)
-    const {shape} = str
+    const bool = create('withDefault', config)
+    const {shape} = bool
 
     test('is valid type', () => {
       expect(shape.valid).toBe(true)
@@ -79,8 +79,8 @@ describe('toBoolean', () => {
           prisma: false
         }
       }
-      const str = create('withDefault', config)
-      const {shape} = str
+      const bool = create('withDefault', config)
+      const {shape} = bool
 
       test('creates basic shape when not configured to target prisma', () => {
         expect(shape.decorators.default).toBeFalsy()

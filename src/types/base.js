@@ -1,5 +1,6 @@
 class ConvertMappingSchemaError extends Error {}
 const {PropType} = require('./prop-type')
+const {Decorators} = require('./decorators')
 
 class MappingBaseType {
   constructor(configuration) {

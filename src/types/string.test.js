@@ -18,7 +18,7 @@ const createParams = (key, value, config = {}) => {
 }
 
 const create = (key, config) => {
-  return toString(createParams(key, string[key], config))
+  return toString(createParams(key, strings[key], config))
 }
 
 describe('toString', () => {

@@ -5,7 +5,6 @@ function isBoolean(type) {
 }
 
 function toBoolean(obj) {
-  console.log(obj)
   return isBoolean(obj.type) && MappingBoolean.create(obj)
 }
 

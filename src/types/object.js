@@ -1,10 +1,5 @@
 const {MappingBaseType} = require('./base')
-
-const {resolveSchema} = require('../schema')
-
-function isObjectType(obj) {
-  return obj === Object(obj);
-}
+const {camelize, isObjectType} = require('./utils')
 
 function isObject(obj) {
   return obj.type === 'object'
@@ -21,10 +16,26 @@ class MappingObject extends MappingBaseType {
   constructor(obj) {
     super(obj)
     this.properties = this.value.properties
+    this.reference = this.value.$ref
   }
 
   get baseType() {
-    return 'object'
+    const name = this._baseType
+    return camelize(name)
+  }
+
+  get _baseType() {
+    return this.reference
+      ? this.resolveRefName
+      : this.name
+  }
+
+  // TODO: lookup reference and determine name there!
+  get resolveRefName() {
+    const paths = this
+      .reference
+      .split('/')
+    return paths[paths.length - 1]
   }
 
   static create(obj) {
@@ -37,7 +48,9 @@ class MappingObject extends MappingBaseType {
 
   // TODO: how to determine this?
   get ref() {
-    return 'embedded'
+    return this.reference
+      ? 'reference'
+      : 'embedded'
   }
 
   get typeDef() {
@@ -45,11 +58,18 @@ class MappingObject extends MappingBaseType {
   }
 
   get schema() {
-    return this.value
+    return this.properties
+      ? this.value
+      : this.referencedSchema
+  }
+
+  // TODO: follow $ref
+  get referencedSchema() {
+    return {type: 'object', properties: {}}
   }
 
   get valid() {
-    this.properties
+    return this.properties || this.reference
       ? true
       : false
   }
@@ -75,3 +95,5 @@ module.exports = {
   toObject,
   MappingObject
 }
+
+const {resolveSchema} = require('../schema')

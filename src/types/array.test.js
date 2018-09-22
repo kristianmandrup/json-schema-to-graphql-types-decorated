@@ -7,6 +7,7 @@ const arrays = {
   embedded: {
     "description": "Bank accounts",
     "type": "array",
+    name: 'accounts',
     "items": {
       "type": {
         "name": "Account",
@@ -21,6 +22,7 @@ const arrays = {
   defRef: {
     "description": "Bank accounts",
     "type": "array",
+    name: 'accounts',
     "items": {
       "$ref": "#/definitions/account"
     }
@@ -29,14 +31,27 @@ const arrays = {
 
 const config = {}
 
+const createParams = (key, value, config = {}) => {
+  return {key, value, type: value.type, config}
+}
+
+const $create = (key, value, config) => {
+  return toBoolean(createParams(key, value, config))
+}
+
+const create = (key, config) => {
+  return $create(key, arrays[key], config)
+}
+
 describe('toArray', () => {
   test.only('invalid type', () => {
-    const shape = toArray({key: 'bad', value: arrays.invalid})
-    expect(shape).toBeFalsy()
+    const arr = create('invalid')
+    expect(arr).toBeFalsy()
   })
 
   describe('item type is embedded', () => {
-    const shape = toArray({key: 'accounts', value: arrays.embedded, config})
+    const arr = create('embedded')
+    const {shape} = arr
 
     test('creates shape with embedded type', () => {
       expect(shape.name).toEqual('accounts')
@@ -48,7 +63,8 @@ describe('toArray', () => {
 
   describe('item type is definiton reference', () => {
     test('creates shape with reference type', () => {
-      const shape = toArray({key: 'accounts', value: arrays.defRef, config})
+      const arr = create('defRef')
+      const {shape} = arr
       expect(shape.name).toEqual('accounts')
       expect(shape.is).toEqual('type-ref')
       expect(shape.ref).toEqual('reference')

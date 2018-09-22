@@ -1,16 +1,15 @@
 const {toObject} = require('./object')
 
-const dates = {
+const objs = {
   invalid: {
     type: 'number'
   },
   bad: {
     type: 'object'
   },
-  nested: {
+  account: {
     "description": "Bank account",
     type: 'object',
-    name: 'account',
     properties: {
       "name": {
         "type": "string"
@@ -23,16 +22,31 @@ const dates = {
   }
 }
 
+const config = {}
+
+const createParams = (key, value, config = {}) => {
+  return {key, value, type: value.type, config}
+}
+
+const $create = (key, value, config) => {
+  return toObject(createParams(key, value, config))
+}
+
+const create = (key, config) => {
+  return $create(key, objs[key], config)
+}
+
 describe('toObject', () => {
 
-  test.only('invalid type', () => {
-    const shape = toObject({key: 'invalid', value: dates.invalid})
-    expect(shape).toBeFalsy()
+  test('invalid type', () => {
+    const obj = create('invalid')
+    expect(obj).toBeFalsy()
   })
 
   test('bad type', () => {
     try {
-      const shape = toObject({key: 'bad', value: dates.bad})
+      const obj = create('bad')
+      const {shape} = obj
       expect(shape.valid).toBe(false)
     } catch (err) {
       console.log(err)
@@ -41,11 +55,23 @@ describe('toObject', () => {
 
   describe('nested', () => {
     test('valid type with type-ref', () => {
-      const shape = toObject({key: 'colors', value: dates.colors})
+      const obj = create('account')
+      const {shape} = obj
       expect(shape.valid).toBe(true)
       expect(shape.is).toEqual('type-ref')
       expect(shape.ref).toEqual('embedded')
       expect(shape.type.basic).toEqual('Account')
+    })
+  })
+
+  describe('referenced', () => {
+    test('valid type with type-ref', () => {
+      const obj = create('referenced')
+      const {shape} = obj
+      expect(shape.valid).toBe(true)
+      expect(shape.is).toEqual('type-ref')
+      expect(shape.ref).toEqual('reference')
+      expect(shape.type.basic).toEqual('Car')
     })
   })
 })
