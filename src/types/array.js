@@ -21,7 +21,7 @@ class MappingArray extends MappingBaseType {
   }
 
   get typeMap() {
-    return {integer: 'Int', 'date-time': 'Date'}
+    return {integer: 'Int', 'date-time': 'Date', time: 'Date', boolean: 'Bool', number: 'Float'}
   }
 
   normalizeType(typeName) {
