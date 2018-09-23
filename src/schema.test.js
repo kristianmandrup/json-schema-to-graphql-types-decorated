@@ -145,44 +145,4 @@ describe('resolveSchema', () => {
       })
     })
   })
-
-  describe.only('propsToOutput', () => {
-    const result = propsToOutput({properties})
-
-    describe('props', () => {
-      const {props} = result
-
-      test('has props', () => {
-        expect(props).toBeTruthy()
-      })
-    })
-
-    describe('enums', () => {
-      const {enums} = result
-
-      test('has enums', () => {
-        expect(enums).toBeTruthy()
-      })
-    })
-
-    describe.only('types', () => {
-      const {types} = result
-
-      test('has types', () => {
-        expect(types).toBeTruthy()
-      })
-
-      test('has Person type', () => {
-        expect(types.Person).toBeTruthy()
-      })
-
-      test('has Account type', () => {
-        expect(types.Account).toBeTruthy()
-      })
-
-      test('has Car type', () => {
-        expect(types.Car).toBeTruthy()
-      })
-    })
-  })
 })

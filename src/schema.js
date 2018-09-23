@@ -14,8 +14,8 @@ function resolveSchema(schema, config = {}, built = {}, inner = true) {
       }
 
       const result = {
-        enums: [],
-        types: []
+        enums: {},
+        types: {}
       }
 
       if (propsOutput.enums) {
@@ -38,28 +38,6 @@ function resolveSchema(schema, config = {}, built = {}, inner = true) {
   throw new Error('invalid schema: must be an object with properties')
 }
 
-function propsToOutput(obj) {
-  const props = []
-  const enums = []
-  const types = []
-  const {properties} = obj
-
-  Object
-    .keys(properties)
-    .map((key) => {
-      const value = properties[key]
-      const entry = propToSchemaEntry({
-        value,
-        ...obj
-      })
-      entry.primitive && props.push(entry.primitive)
-      entry.enum && enums.push(entry.enum)
-      entry.type && types.push(entry.type)
-    })
-
-  return {props, enums, types}
-}
-
 function normalizeRequired(schema) {
   const {properties, required} = schema
   return Object
@@ -73,19 +51,8 @@ function normalizeRequired(schema) {
     }, {})
 }
 
-function propToSchemaEntry(obj) {
-  const entryBuilder = createSchemaEntry || config.createSchemaEntry
-  return entryBuilder(obj)
-}
-
-function createSchemaEntry(obj) {
-  return new SchemaEntry(obj).toEntry()
-}
+const {propsToOutput} = require('./props')
 
 module.exports = {
-  propsToOutput,
-  resolveSchema,
-  createSchemaEntry
+  resolveSchema
 }
-
-const {SchemaEntry} = require('./entry');

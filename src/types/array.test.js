@@ -24,7 +24,7 @@ const arrays = {
   defRef: {
     "description": "Bank accounts",
     "type": "array",
-    name: 'accounts',
+    "name": "accounts",
     "items": [
       {
         "$ref": "#/definitions/account"
