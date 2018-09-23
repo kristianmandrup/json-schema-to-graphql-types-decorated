@@ -8,8 +8,8 @@ Under development. See the master branch for a stable (but primitive) working so
 
 ## Quick start
 
-- npm: `npm install json-schema-to-es-mapping -S`
-- yarn: `yarn add json-schema-to-es-mapping`
+- npm: `npm install json-schema-to-graphql-types-decorated -S`
+- yarn: `yarn add json-schema-to-graphql-types-decorated`
 
 Use
 

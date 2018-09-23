@@ -30,6 +30,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "dot-prop": "^4.2.0",
     "graph.js": "^1.21.1"
   }
 }
