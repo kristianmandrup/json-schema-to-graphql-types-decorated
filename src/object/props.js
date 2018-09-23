@@ -27,8 +27,6 @@ const createPropOutputHandler = (obj) => (result, key) => {
     ...obj
   })
   const {primitive, $enum, type} = entry
-  console.log({entry, name: primitive.name})
-
   primitive && assignAt(result.props)(primitive.name, primitive)
   $enum && assignAt(result.enums)($enum.name, $enum)
   type && assignAt(result.types)(type.name, type)
