@@ -5,7 +5,23 @@ class ManyToManyDecorator extends Relationship {
     super({model, config})
   }
 
-  get isManyToMany() {
-    return this.isManyOut && this.isManyIn
+  get name() {
+    return 'ManyToMany'
   }
+
+  get args() {
+    return [
+      {
+        key: '()',
+        value: 'User'
+      }, {
+        key: 'user',
+        value: 'user.photos'
+      }
+    ]
+  }
+}
+
+module.exports = {
+  ManyToManyDecorator
 }

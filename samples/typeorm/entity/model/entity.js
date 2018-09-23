@@ -1,9 +1,7 @@
+const {BaseEntityModel} = require('./base')
 class EntityModel {
   constructor({shape, config}) {
-    this.shape = shape
-    this.config = config
-    this.value = shape.value
-    this.db = this.value.db
+    super({shape, config})
   }
 
   get isEntity() {

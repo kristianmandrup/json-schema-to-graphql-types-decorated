@@ -20,5 +20,7 @@ class ColumnModel {
   get isValidPrimaryType() {
     return ['string', 'number', 'integer'].indexOf(this.value.expandedType) >= 0
   }
-
+}
+module.exports = {
+  ColumnModel
 }

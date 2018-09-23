@@ -4,6 +4,10 @@ class RelationshipDecorator {
     this.config = config
   }
 
+  get isManyToMany() {
+    return this.isManyOut && this.isManyIn
+  }
+
   get isManyOut() {
     return false
   }
@@ -11,4 +15,7 @@ class RelationshipDecorator {
   get isManyIn() {
     return false
   }
+}
+module.exports = {
+  RelationshipDecorator
 }

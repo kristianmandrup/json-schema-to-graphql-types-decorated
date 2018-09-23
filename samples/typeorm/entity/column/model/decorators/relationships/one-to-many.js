@@ -5,6 +5,19 @@ class OneToManyDecorator extends Relationship {
     super({model, config})
   }
 
+  get name() {
+    return 'OneToMany'
+  }
+
+  get args() {
+    return [
+      {
+        key: '()',
+        value: 'Category'
+      }
+    ]
+  }
+
   get isOneToMany() {
     return this.isManyOut && !this.isManyIn
   }

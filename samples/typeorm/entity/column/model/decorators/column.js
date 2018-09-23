@@ -12,4 +12,12 @@ class ColumnDecorator {
   get name() {
     return 'Column'
   }
+
+  get args() {
+    return []
+  }
+}
+
+module.exports = {
+  ColumnDecorator
 }
