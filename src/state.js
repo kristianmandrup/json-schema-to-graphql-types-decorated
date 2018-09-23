@@ -26,13 +26,14 @@ class State {
     return this.state.unions
   }
 
-  onNew(obj) {
-    this.ensure(obj)
+  add(obj, type) {
+    this.ensure(obj, type)
   }
 
-  onNewEdge($from, $to, refType = 'type') {
+  addRef($from, $to, refType = 'type') {
     const from = this.addOrGet($from)
     const to = this.addOrGet($to)
+    refType = refType || $to.$type
 
     const fromNode = this.addOrGetNode(from)
     const toNode = this.addOrGet(to)
@@ -99,6 +100,18 @@ class State {
     return this
       .graph
       .vertexValue(key)
+  }
+
+  hasEdge(from, to) {
+    this
+      .graph
+      .hasEdge(from, to)
+  }
+
+  getEdge(from, to) {
+    this
+      .graph
+      .edgeValue(from, to)
   }
 
   ensureNode(key, value) {
