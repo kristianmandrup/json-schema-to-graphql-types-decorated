@@ -2,6 +2,7 @@ class Base {
   constructor(config) {
     this.config = config
     this.log = config.log || console.log
+    this.logErr = config.error || console.error
   }
 
   message() {
@@ -12,9 +13,14 @@ class Base {
     return this.message[errKey] || 'error'
   }
 
-  error(name, msg) {
-    const errMsg = `[${this.constructor.name}:${name}] ${msg}`
+  warn(name, msg) {
+    const errMsg = `WARNING [${this.constructor.name}:${name}] ${msg}`
     this.log(errMsg)
+  }
+
+  error(name, msg) {
+    const errMsg = `ERROR [${this.constructor.name}:${name}] ${msg}`
+    this.logErr(errMsg)
     throw new Error(errMsg)
   }
 }

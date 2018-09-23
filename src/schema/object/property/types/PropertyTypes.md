@@ -2,13 +2,45 @@
 
 Property types in most contexts can roughly be categorized into the following
 
-- primitive (string, number, boolean, ...)
-- class (type, model, entity etc.)
-- enum
+- `primitive` (string, number, boolean, ...)
+- `class` (type, model, entity etc.)
+- `enum`
 
 ## Base
 
 All property type classes have the following:
+
+### Constructor
+
+```js
+this.resolveSchema = config.resolveSchema;
+this.$schemaRef = config.$schemaRef;
+this.reference = this.value.$ref;
+this.defRef = new DefinitionRef({
+  schema: this.$schemaRef,
+  reference: this.reference
+});
+this.resolveAndMergeReferenced();
+
+this.extractMeta();
+this.extractDecorators();
+```
+
+### resolveAndMergeReferenced
+
+`resolveAndMergeReferenced` resolves a `$ref` reference and merges the object into the property `value`
+
+```js
+resolveAndMergeReferenced() {
+  const remoteObject = this
+    .defRef
+    .resolveObjct()
+  this.value = {
+    ...this.value,
+    remoteObject
+  }
+}
+```
 
 ### extractMeta
 
@@ -25,6 +57,26 @@ extractMeta() {
 ```
 
 You can extract extra meta data to suit your particular context as needed in your own Property Type classes.
+
+### extractDecorators
+
+Extracts decorators for the current `namespace` (context) with fall back to generic decorators
+
+```js
+extractDecorators() {
+  const {namespace} = this.config
+  const ns = this.value[namespace] || {}
+  const ownDecorators = ns.decorators || $graphql
+  const decorators = this.config.decorators || {}
+  this.classDecorators = (decorators[type] || {})[key]
+  this.propDecorators = decorators[key]
+  this._decorators = ownDecorators || this.classDecorators || this.propDecorators
+}
+```
+
+### valid
+
+`valid` is by default `true`
 
 ### type
 
@@ -67,13 +119,19 @@ Shape returns the data collected from the JSON property.
 
 ```js
 {
+  decorators: this.decorators, // decorators extracted from value and config
+  config: this.config, // the full config
+  value: this.value, // the full property value
   jsonPropType: this.type, // raw
   expandedType: this.kind, // string, number, enum, date, ...
   is: this.is,
   category: this.category, // primitive, enum or object
-  className: this.clazz, // Person, Car
+  fullClassName: this.fullClassName, // ownerName + key
+  ownerName: this.ownerName, // Person, Car whoever has the property that references this object
+  baseType: this.baseType, // base type
+  // the resolved type, such as PersonCar for a Car object under a Person or MegaCar for a remote ref
+  resolvedTypeName: this.resolvedTypeName,
   key: this.key,
-  name: this.name, // name, age, ...
   valid: Boolean(this.valid),
   required: Boolean(this.required),
   multiple: Boolean(this.multiple)
@@ -103,7 +161,7 @@ get name() {
 }
 ```
 
-### refTypeName
+### resolvedTypeName
 
 The `refTypeName` should return the name of the type referenced by the property.
 Depending on the context, this could be f.ex `Car` for an object type reference via `$ref: '#/definitions/vehicles/car'`
@@ -112,9 +170,28 @@ The `refTypeName` should be `undefined` if the property is a primitive.
 
 ```js
 get refTypeName() {
-  this.error('refTypeName', 'must be specified by subclass')
+
 }
 ```
+
+### fullClassName
+
+The full
+
+```js
+get fullClassName() {
+  return camelize([this.clazz, this.key].join())
+}
+```
+
+ownerName: this.ownerName, // Person, Car whoever has the property that references this object
+baseType: this.baseType, // base type
+
+the resolved type, such as PersonCar for a Car object under a Person or MegaCar for a remote ref
+
+resolvedTypeName: this.resolvedTypeName,
+
+key: this.key,
 
 ### configType
 
@@ -137,12 +214,12 @@ get overrideType() {
 }
 ```
 
-### multiple
+### collection
 
-`multiple` can be set to indicate if the property is a collection entity, such as a dictionary (object/map) or list (array) etc. By default `false` but true for `array` and `object`
+`collection` can be set to indicate if the property is a collection entity, such as a dictionary (object/map) or list (array) etc. By default `false` but true for `array` and `object`
 
 ```js
-get multiple() {
+get collection() {
   return false
 }
 ```

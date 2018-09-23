@@ -1,8 +1,10 @@
 const {BaseType} = require('../base')
-const {camelize, isObjectType} = require('../utils')
+const {ArrayTypeRefs} = require('./type-refs')
+// const {isObjectType} = require('../utils')
 
 function isArray(property) {
-  return property.type === 'array' // && isObjectType(obj.items)
+  // items can be resolved via external $ref ??
+  return property.type === 'array' && isObjectType(obj.items)
 }
 
 function resolve({property, config}) {
@@ -12,18 +14,26 @@ function resolve({property, config}) {
 class ArrayType extends BaseType {
   constructor({property, config}) {
     super({property, config})
+    this.items = this.value.items
+    this._type = this.items.type
     this.resolveNested()
+    this.arrayTypeRefs = new ArrayTypeRefs({items})
   }
 
   get kind() {
     return 'array'
   }
 
-  get refTypeName() {
-    return this.refType
+  get refTypeNames() {
+    return this.arrRefType.resolved
   }
 
-  get multiple() {
+  // pick the first! (default strategy)
+  get refTypeName() {
+    return this.refTypeNames[0]
+  }
+
+  get collection() {
     return true
   }
 
@@ -31,19 +41,26 @@ class ArrayType extends BaseType {
     return true
   }
 
-  constructor(obj) {
-    super(obj)
-    this.items = this.value.items
-    this._type = this.items.type
-  }
-
   get valid() {
     return Array.isArray(this.items)
   }
 
-  // TODO
-  resolveNested() {
+  resolveTypeRefs() {
+    const typeRefs = this
+      .arrayTypeRefs
+      .resolve()
+    this.onTypeRefs(...typeRefs)
     return this
+  }
+
+  onTypeRefs(...typeRefs) {
+    typeRefs.map(typeRef => this.onTypeRefs(typeRef))
+  }
+
+  onTypeRef(typeRef) {
+    this
+      .state
+      .addRef(this, typeRef, {refType: this.refType})
   }
 
   static create(obj) {

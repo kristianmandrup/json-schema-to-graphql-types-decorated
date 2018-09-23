@@ -1,6 +1,12 @@
 const {Base} = require('../base')
 
 class GraphState extends Base {
+  constructor(state, config) {
+    super(config)
+    this.state = state
+    this.state.graph = new ModelGraph(config)
+  }
+
   get graph() {
     return this.state.graph
   }

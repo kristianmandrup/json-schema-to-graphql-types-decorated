@@ -1,6 +1,11 @@
 const {isDate} = require('../date')
+const {camelize} = require('../utils')
 
 class ArrayRefType {
+  constructor({items}) {
+    this.items = items
+  }
+
   get typeMap() {
     return {integer: 'Int', 'date-time': 'Date', boolean: 'Bool', number: 'Float'}
   }
@@ -9,7 +14,7 @@ class ArrayRefType {
     return this.typeMap[typeName.toLowerCase()] || typeName
   }
 
-  get refType() {
+  get resolved() {
     if (!this.valid) {
       const msg = 'items. Must be an array of valid type definitions for the property'
       this.error('Array', `Invalid ${msg}`)

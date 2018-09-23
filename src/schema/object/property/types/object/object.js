@@ -1,5 +1,6 @@
 const {BaseType} = require('../base')
 const {camelize} = require('../utils')
+const {Nested} = require('./nested')
 
 // no reason to test for properties, as we might be using $ref instead
 function isObject(property) {
@@ -17,32 +18,19 @@ class ObjectType extends BaseType {
   constructor(property, config) {
     super(property, config)
     this.properties = this.value.properties
-    this.reference = this.value.$ref
-    this.resolveSchema = config.resolveSchema
-    this.$schemaRef = config.$schemaRef
   }
 
   get kind() {
     return 'object'
   }
 
-  get refType() {
-    return this.baseType
-  }
-
   get defaultType() {
     return 'Object'
   }
 
-  get baseType() {
-    const name = this._baseType
+  get resolvedTypeName() {
+    const name = this.refTypeName || this.name || this.fullName
     return name && camelize(name) || this.defaultType
-  }
-
-  get _baseType() {
-    return this.reference
-      ? this.resolveRefName
-      : this.name
   }
 
   static create(obj) {
@@ -53,7 +41,7 @@ class ObjectType extends BaseType {
     return 'class'
   }
 
-  get multiple() {
+  get collection() {
     return true
   }
 
@@ -61,38 +49,18 @@ class ObjectType extends BaseType {
     return true
   }
 
-  get schema() {
-    return this.properties
-      ? this.value
-      : this.referencedSchema
-  }
-
-  // TODO: follow $ref using new DefinitionRef class
-  get referencedSchema() {
-    return this.$schemaRef || {}
+  resolveNested() {
+    if (!this.valid) 
+      return this
+    const nested = new Nested({value: this.value})
+    nested.resolve()
+    return this
   }
 
   get valid() {
     return this.properties || this.reference
       ? true
       : false
-  }
-
-  resolveNested() {
-    this.valid
-      ? this._resolve()
-      : this._noResolve()
-    return this
-  }
-
-  _noResolve() {
-    // this.error(`${this.key}: missing object properties`)
-  }
-
-  _resolve() {
-    !this.resolveSchema && this.error('resolve', 'missing resolveSchema')
-    this.nested = this.resolveSchema({schema: this.schema, config: this.config})
-    return this
   }
 }
 

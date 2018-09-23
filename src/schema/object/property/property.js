@@ -1,16 +1,20 @@
 const {resolvers} = require('./types')
 
 const createProperty = ({property, config}) => {
-  return new Property({property, config})
+  return new PropertyResolver({property, config})
 }
 
-class Property extends Base {
+class PropertyResolver extends Base {
   constructor({property, config}) {
-    const {name, key} = property
     this.property = property
-    this.key = key
-    this.name = name
-    this.types = config.types || defaults.types
+    this.config = config
+    // this.state = config.state
+    this.dispatcher = config.dispatcher
+    this.resolvers = config.resolvers || resolvers
+  }
+
+  get sender() {
+    return 'propertyResolver'
   }
 
   isValid() {
@@ -30,30 +34,61 @@ class Property extends Base {
         acc[key] = resolver(this.property)
         return acc
       }, {})
-    return {object: this.$object, enum: this.$enum, primitive: this.$primitive}
+
+    const entity = this.$object || this.$enum || this.$primitive
+    this.onEntity(entity)
+    return entity
+  }
+
+  onEntity(entity) {
+    const event = {
+      sender: this.sender,
+      payload: {
+        ...entity
+      }
+    }
+    this.dispatch(event)
+  }
+
+  dispatch(event) {
+    if (!this.dispatcher) 
+      this.warn('dispatch', 'missing dispatcher')
+    this
+      .dispatcher
+      .dispatch(event)
   }
 
   get $object() {
     this.object = this.object || (this.map.object || {}).shape
-    return this.object
+    return this.object && {
+      value: this.object,
+      type: 'object'
+    }
   }
 
   get $enum() {
     this.enum = this.enum || (this.map.enum || {}).shape
-    return this.enum
+    return this.enum && {
+      value: this.enum,
+      type: 'enum'
+    }
   }
 
   get $primitive() {
-    if (this.enumerator) 
+    if (this.$enum) 
       return
 
     const {array, date, string, number} = this.map
     this.prim = this.prim || (array || date || string || number || {}).shape
-    return
+
+    return this.prim && {
+      value: this.prim,
+      type: 'primitive'
+    }
   }
 }
 
 module.exports = {
   createProperty,
-  Property
+  PropertyResolver
 }

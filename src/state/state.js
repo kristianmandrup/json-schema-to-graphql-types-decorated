@@ -5,8 +5,14 @@ const isString = (val) => {
 }
 
 class State extends GraphState {
-  constructor(state = initial()) {
-    this.state = state
+  constructor(state = initial(), config) {
+    super(state, config)
+  }
+
+  onEvent(event) {
+    const {sender, payload}
+    const {action} = payload
+    this[action](payload)
   }
 
   get types() {

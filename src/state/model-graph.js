@@ -1,8 +1,10 @@
 const Graph = require('graph.js/dist/graph.full')
 
 class ModelGraph {
-  constructor({graph, config}) {
-    this.graph = graph
+  constructor(config = {}) {
+    const {graph} = config
+    this.graph = graph.instance || new Graph(graph.args)
+    this.config = config
   }
 
   addEdge(from, to, value) {

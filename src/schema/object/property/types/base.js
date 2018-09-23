@@ -1,15 +1,17 @@
 const {Base} = require('../../../../base')
-
+const {DefinitionRef} = require('../type-ref')
+const {camelize} = require('./utils')
 class PropertyError extends Error {}
 
 class BaseType extends Base {
   constructor(property, config) {
-    let {name, key, type, value} = property
+    let {ownerName, name, type, value} = property
 
     config = config || {}
     this.property = property
     this.key = key
-    this.clazz = name
+    this.name = value.name || key
+    this.ownerName = ownerName
     this._type = type
     this.value = value
     this.format = value.format
@@ -17,7 +19,24 @@ class BaseType extends Base {
     this.config = config
     this.built = built
 
+    this.resolveSchema = config.resolveSchema
+    this.$schemaRef = config.$schemaRef
+    this.reference = this.value.$ref
+    this.defRef = new DefinitionRef({schema: this.$schemaRef, reference: this.reference})
+    this.resolveAndMergeReferenced()
+
     this.extractMeta()
+    this.extractDecorators()
+  }
+
+  resolveAndMergeReferenced() {
+    const remoteObject = this
+      .defRef
+      .resolveObjct()
+    this.value = {
+      ...this.value,
+      remoteObject
+    }
   }
 
   extractMeta() {
@@ -25,39 +44,90 @@ class BaseType extends Base {
     this._types = this._meta.types || {}
   }
 
+  extractDecorators() {
+    const {namespace} = this.config
+    const ns = this.value[namespace] || {}
+    const ownDecorators = ns.decorators || $graphql
+    const decorators = this.config.decorators || {}
+    this.classDecorators = (decorators[type] || {})[key]
+    this.propDecorators = decorators[key]
+    this.decorators = ownDecorators || this.classDecorators || this.propDecorators
+  }
+
+  get sender() {
+    return 'propertyType'
+  }
+
+  onEntity(entity) {
+    const event = {
+      sender: this.sender,
+      payload: {
+        ...entity
+      }
+    }
+    this.dispatch(event)
+  }
+
+  dispatch(event) {
+    if (!this.dispatcher) 
+      this.warn('dispatch', 'missing dispatcher')
+
+    this
+      .dispatcher
+      .dispatch(event)
+  }
+
   get valid() {
     return true
   }
 
   get shape() {
-    const shape = {
+    return {
+      decorators: this.decorators, // decorators extracted from value and config
+      config: this.config, // the full config
+      value: this.value, // the full property value
       jsonPropType: this.type, // raw
       expandedType: this.kind, // string, number, enum, date, ...
       is: this.is,
       category: this.category, // primitive, enum or object
-      className: this.clazz, // Person, Car
+      fullName: this.fullName, // ownerName + key
+      ownerName: this.ownerName, // Person, Car whoever has the property that references this object
+      baseType: this.baseType, // base type
+      // the resolved type, such as PersonCar for a Car object under a Person or MegaCar for a remote ref
+      resolvedTypeName: this.resolvedTypeName,
       key: this.key,
-      name: this.name, // name, age, ...
       valid: Boolean(this.valid),
       required: Boolean(this.required),
       multiple: Boolean(this.multiple)
     }
-
-    if (this.refType) {
-      shape.refType = this.refType
-    }
-    if (this.refTypeName) {
-      shape.refTypeName = this.refTypeName
-    }
-
-    return shape
   }
 
-  get ref() {
+  get defaultType() {
+    return 'any'
+  }
+
+  get baseType() {
+    return this.defaultType
+  }
+
+  // used for embedded objects if otherwise unable to determine a good type name
+  get fullClassName() {
+    return camelize([this.ownerName, this.key].join())
+  }
+
+  get refTypeName() {
+    return this.defRef.typeName
+  }
+
+  get resolvedTypeName() {
+    return this.baseType || this.refTypeName
+  }
+
+  get refType() {
     return undefined
   }
 
-  get multiple() {
+  get collection() {
     return false
   }
 
@@ -67,14 +137,6 @@ class BaseType extends Base {
 
   get dictionary() {
     return false
-  }
-
-  get name() {
-    return this.value.name || this.key
-  }
-
-  get refTypeName() {
-    this.error('refTypeName', 'must be specified by subclass')
   }
 
   get configType() {
