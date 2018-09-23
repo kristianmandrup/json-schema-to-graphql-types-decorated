@@ -386,7 +386,21 @@ $ npm run test
 
 ## TODO
 
-Add support for `enum` type, see [How to design GraphQL queries and mutations: enum type](https://medium.com/graphql-mastery/how-to-design-graphql-mutations-and-queries-part-2-enums-ebb01613832)
+### Union types
+
+Add support for [union types](https://medium.com/the-graphqlhub/graphql-tour-interfaces-and-unions-7dd5be35de0d)
+
+Especially useful for arrays that can have multiple types under `items`.
+
+```graphql
+union SearchResult = User | Movie | Book
+```
+
+### Enum
+
+WIP
+
+Add good support for `enum` type, see [How to design GraphQL queries and mutations: enum type](https://medium.com/graphql-mastery/how-to-design-graphql-mutations-and-queries-part-2-enums-ebb01613832)
 
 The enum type is the second type in the GraphQL specification that can be used as a primitive value.
 
@@ -397,6 +411,12 @@ enum TaskStateEnum {
   inProgress
 }
 ```
+
+### Use to generate TypeORM models
+
+We should be able to use the same infrastructure to generate TypeORM entity model classes with property types and relationship decorators.
+
+Note: Would likely be better to create a directed graph from JSON schema and build from there ;)
 
 ## Author
 

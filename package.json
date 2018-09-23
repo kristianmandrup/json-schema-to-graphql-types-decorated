@@ -28,5 +28,8 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "graph.js": "^1.21.1"
   }
 }

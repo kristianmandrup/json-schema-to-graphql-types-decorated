@@ -1,5 +1,6 @@
 const {SchemaEntry, SchemaEntryError} = require('./entry');
 const {resolveSchema, createSchemaEntry} = require('./schema')
+const {State} = require('./state')
 
 const defaults = {
   indentFn: (num, newline = true) => {
@@ -23,10 +24,8 @@ function renderNamed({name, props}) {
 }
 
 const rendered = {}
-const built = {
-  enums: {},
-  types: {}
-}
+
+const built = new State()
 
 function buildTypes(schema, config = {}) {
   resolveSchema(schema, config, built, false)
