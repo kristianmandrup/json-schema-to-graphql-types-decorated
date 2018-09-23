@@ -41,16 +41,18 @@ class PropertyResolver extends Base {
   }
 
   onEntity(entity) {
-    const event = {
-      sender: this.sender,
+    this.dispatch({
       payload: {
         ...entity
       }
-    }
-    this.dispatch(event)
+    })
   }
 
-  dispatch(event) {
+  dispatch({payload}) {
+    const event = {
+      sender: this.sender,
+      payload: payload
+    }
     if (!this.dispatcher) 
       this.warn('dispatch', 'missing dispatcher')
     this

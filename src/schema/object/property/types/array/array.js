@@ -1,10 +1,10 @@
 const {BaseType} = require('../base')
-const {ArrayTypeRefs} = require('./type-refs')
+const {ItemsResolver} = require('./items/item-type')
 // const {isObjectType} = require('../utils')
 
 function isArray(property) {
   // items can be resolved via external $ref ??
-  return property.type === 'array' && isObjectType(obj.items)
+  return property.type === 'array' // && isObjectType(obj.items)
 }
 
 function resolve({property, config}) {
@@ -17,20 +17,26 @@ class ArrayType extends BaseType {
     this.items = this.value.items
     this._type = this.items.type
     this.resolveNested()
-    this.arrayTypeRefs = new ArrayTypeRefs({items})
+  }
+
+  get itemsResolver() {
+    return new ItemsResolver({items})
   }
 
   get kind() {
     return 'array'
   }
 
-  get refTypeNames() {
-    return this.arrRefType.resolved
+  get refTypeName() {
+    this.refTypeNames.length > 1
+      ? `${this.fullClassName}Item`
+      : this.refTypeName
   }
 
-  // pick the first! (default strategy)
-  get refTypeName() {
-    return this.refTypeNames[0]
+  get refTypeNames() {
+    return this
+      .itemsResolver
+      .resolve()
   }
 
   get collection() {
@@ -53,14 +59,29 @@ class ArrayType extends BaseType {
     return this
   }
 
+  // dispatcher can then decide to add typeRefs as Union type as well as adding
+  // edges etc.
   onTypeRefs(...typeRefs) {
+    const payload = {
+      typeRefs: typeRefs,
+      refTypeName: this.refTypeName,
+      union: true,
+      array: true
+    }
+
+    this.dispatch({payload})
     typeRefs.map(typeRef => this.onTypeRefs(typeRef))
   }
 
   onTypeRef(typeRef) {
-    this
-      .state
-      .addRef(this, typeRef, {refType: this.refType})
+    const payload = {
+      ...typeRef,
+      refType: this.refType,
+      array: true
+    }
+    // dispatcher can then decide to add typeRefs as Union type as well as adding
+    // edges etc.
+    this.dispatch({payload})
   }
 
   static create(obj) {

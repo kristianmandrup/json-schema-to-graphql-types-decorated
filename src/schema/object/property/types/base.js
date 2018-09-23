@@ -68,7 +68,12 @@ class BaseType extends Base {
     this.dispatch(event)
   }
 
-  dispatch(event) {
+  dispatch({payload}) {
+    const event = {
+      sender: this.sender,
+      payload: payload
+    }
+
     if (!this.dispatcher) 
       this.warn('dispatch', 'missing dispatcher')
 
@@ -88,17 +93,29 @@ class BaseType extends Base {
       value: this.value, // the full property value
       jsonPropType: this.type, // raw
       expandedType: this.kind, // string, number, enum, date, ...
-      is: this.is,
+
+      is: this.is, // custom
       category: this.category, // primitive, enum or object
-      fullName: this.fullName, // ownerName + key
+
+      fullClassName: this.fullClassName, // ownerName + key
       ownerName: this.ownerName, // Person, Car whoever has the property that references this object
       baseType: this.baseType, // base type
+
       // the resolved type, such as PersonCar for a Car object under a Person or MegaCar for a remote ref
       resolvedTypeName: this.resolvedTypeName,
+
+      // for Array
+      refTypeNames: this.refTypeNames,
+      refTypeName: this.refTypeName,
+
       key: this.key,
+
       valid: Boolean(this.valid),
       required: Boolean(this.required),
-      multiple: Boolean(this.multiple)
+
+      collection: Boolean(this.collection),
+      list: Boolean(this.list),
+      dictionary: Boolean(this.dictionary)
     }
   }
 

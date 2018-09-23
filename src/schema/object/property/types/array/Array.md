@@ -24,10 +24,20 @@ Uses `arrayTypeRefs.resolve()` to resolve type refs then notifies when resolved.
 
 `onTypeRefs` is used to notify that multiple type refs have been resolved, by default simply calling `onTypeRef` to notify for each
 
+Dispatcher can decide to add `typeRefs` (list of type names extracted from `items` valid for Array) as a `union` type, as well as adding edges to state graph etc.
+
 ```js
-  onTypeRefs(...typeRefs) {
-    typeRefs.map(typeRef => this.onTypeRefs(typeRef))
+onTypeRefs(...typeRefs) {
+  const payload = {
+    typeRefs: typeRefs,
+    refTypeName: this.refTypeName,
+    union: true,
+    array: true
   }
+
+  this.dispatch({payload})
+  typeRefs.map(typeRef => this.onTypeRefs(typeRef))
+}
 ```
 
 ### onTypeRef
@@ -35,9 +45,13 @@ Uses `arrayTypeRefs.resolve()` to resolve type refs then notifies when resolved.
 `onTypeRef` is used to notify that a single type ref has been resolved
 
 ```js
-  onTypeRef(typeRef) {
-    this
-      .state
-      .addRef(this, typeRef, {refType: this.refType})
+onTypeRef(typeRef) {
+  const payload = {
+    ...typeRef,
+    refType: this.refType,
+    array: true
   }
+  // dispatcher decides what to do with these types, such as adding edges etc
+  this.dispatch({payload})
+}
 ```

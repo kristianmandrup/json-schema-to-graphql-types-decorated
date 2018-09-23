@@ -1,8 +1,7 @@
+const {Base} = require('../../base')
 const {normalizeRequired} = require('./normalize')
 const {camelize} = require('./utils')
-const {property: {
-    createProperty
-  }} = require('./property')
+const {createProperties} = require('./properties')
 
 class SchemaObject extends Base {
   constructor({schema, config}) {
@@ -30,15 +29,12 @@ class SchemaObject extends Base {
     this.validate()
     const name = camelize(schema.title || schema.name)
     this.normalizeProps()
-    const {name, value} = this.properties
-    const property = {
-      name,
-      key: name,
-      type,
-      value
+    const object = {
+      ownerName: name,
+      properties: this.properties
     }
-    const property = createProperty({property, config})
-    return property.resolve()
+    const properties = createProperties({object, config})
+    return properties.resolve()
   }
 
   normalizeProps() {
