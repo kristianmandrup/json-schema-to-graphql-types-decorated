@@ -20,6 +20,13 @@ class ObjectType extends BaseType {
     this.properties = this.value.properties
   }
 
+  get shape() {
+    return {
+      ...super.shape,
+      nested: this.nested
+    }
+  }
+
   get kind() {
     return 'object'
   }
@@ -53,7 +60,7 @@ class ObjectType extends BaseType {
     if (!this.valid) 
       return this
     const nested = new Nested({value: this.value})
-    nested.resolve()
+    this.nested = nested.resolve()
     return this
   }
 

@@ -1,22 +1,12 @@
 class Nested {
-  constructor({valid}) {
+  constructor({valid, value}) {
     this.valid = valid
+    this.value = value
   }
 
   resolve() {
-    this.valid
-      ? this.resolveNested()
-      : this.noResolve()
-    return this
-  }
-
-  noResolve() {
-    // this.error(`${this.key}: missing object properties`)
-  }
-
-  resolveNested() {
     !this.resolveObject && this.error('resolve', 'missing resolveObject')
-    this.nested = this.resolveObject({schema: this.objectValue, config: this.config})
+    this.nested = this.resolveObject({value: this.value, config: this.config})
     return this
   }
 }

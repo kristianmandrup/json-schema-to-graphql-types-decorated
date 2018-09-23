@@ -3,13 +3,20 @@ const {normalizeRequired} = require('./normalize')
 const {camelize} = require('./utils')
 const {createProperties} = require('./properties')
 
+const createSchemaObject = ({schema, value, config, opts}) => {
+  return new SchemaObject({schema, value, config, opts})
+}
+
 class SchemaObject extends Base {
-  constructor({schema, config}) {
+  constructor({schema, value, config, opts}) {
     this.schema = schema
+    this.value = value
+    const $schema = schema || value
     this.config = config
-    this.properties = schema.properties
-    this.required = schema.required || []
-    this.definitions = schema.definitions
+    this.opts = opts || {}
+    this.properties = $schema.properties
+    this.required = $schema.required || []
+    this.definitions = $schema.definitions
   }
 
   get hasPropertiesObject() {
@@ -26,9 +33,10 @@ class SchemaObject extends Base {
   }
 
   resolve() {
+    const schema = this.$schema
     this.validate()
     const name = camelize(schema.title || schema.name)
-    this.normalizeProps()
+    this.normalize()
     const object = {
       ownerName: name,
       properties: this.properties
@@ -37,13 +45,23 @@ class SchemaObject extends Base {
     return properties.resolve()
   }
 
+  normalize() {
+    return this.shouldNormalize() && this.normalizeProps()
+  }
+
+  // if schema is received via value, we must assume it comes from a recursive
+  // object resolve
+  get shouldNormalize() {
+    return !this.value
+  }
+
   normalizeProps() {
     this.properties = Object
       .keys(this.properties)
-      .reduce(this.normalize.bind(this), {})
+      .reduce(this.normalizeRequired.bind(this), {})
   }
 
-  normalize(acc, key) {
+  normalizeRequired(acc, key) {
     const value = this.properties[key]
     const isRequired = this
       .required
