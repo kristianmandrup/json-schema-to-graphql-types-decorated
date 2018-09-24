@@ -1,8 +1,8 @@
-const {resolve} = require('./date')
+const {resolve, isDate} = require('./date')
 
 const dates = {
   invalid: {
-    type: 'number'
+    type: 'date'
   },
   birthDate: {
     "description": "Bank accounts",
@@ -14,37 +14,61 @@ const dates = {
 const config = {}
 
 const createParams = (key, value, config = {}) => {
-  return {key, value, type: value.type, config}
+  const property = {
+    key,
+    ...value
+  }
+  return {property, config}
 }
 
 const $create = (key, value, config) => {
-  return resolve(createParams(key, value, config))
+  const params = createParams(key, value, config)
+  return resolve(params)
 }
 
 const create = (key, config) => {
-  return $create(key, dates[key], config)
+  const value = dates[key]
+  if (!value) {
+    throw new Error(`no such date entry: ${key}`)
+  }
+  return $create(key, value, config)
 }
+
+describe('isDate', () => {
+  describe('type: date', () => {
+    const check = isDate({type: 'date', format: 'date-time'})
+    test('is valid', () => {
+      expect(check).toBe(true)
+    })
+  })
+
+  describe('type: string', () => {
+    const check = isDate({type: 'string'})
+    test('is invalid', () => {
+      expect(check).toBe(false)
+    })
+  })
+})
 
 describe('Date', () => {
 
   test('invalid type', () => {
-    const str = create('invalid')
-    expect(str).toBeFalsy()
+    const date = create('invalid')
+    expect(date).toBeFalsy()
   })
 
-  describe.only('basic type', () => {
-    const str = create('birthDate')
-    const {shape} = str
-    console.log({str, shape})
+  describe('basic type', () => {
+    const date = create('birthDate')
+    const {shape} = date
 
     test('is valid type', () => {
       expect(shape.valid).toBe(true)
     })
 
     test('creates basic type shape', () => {
-      expect(shape.name).toEqual('birthDate')
-      expect(shape.is).toEqual('scalar')
-      expect(shape.type.basic).toEqual('Date')
+      expect(shape.key).toEqual('birthDate')
+      expect(shape.category).toEqual('primitive')
+      expect(shape.resolvedTypeName).toEqual('Date')
     })
   })
 })
@@ -61,8 +85,8 @@ describe('configured with custom scalar type', () => {
   const {shape} = str
 
   test('creates type with custom scalar date', () => {
-    expect(shape.name).toEqual('birthDate')
-    expect(shape.is).toEqual('scalar')
-    expect(shape.type.basic).toEqual('MyScalarDate')
+    expect(shape.key).toEqual('birthDate')
+    expect(shape.category).toEqual('primitive')
+    expect(shape.resolvedTypeName).toEqual('MyScalarDate')
   })
 })

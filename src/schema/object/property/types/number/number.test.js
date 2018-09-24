@@ -16,7 +16,7 @@ const config = {}
 const createParams = (key, value, config = {}) => {
   const property = {
     key,
-    value
+    ...value
   }
   return {property, config}
 }

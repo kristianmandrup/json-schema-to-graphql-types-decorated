@@ -1,4 +1,4 @@
-const {toString} = require('./string')
+const {isString, resolve} = require('./string')
 
 const strings = {
   invalid: {
@@ -14,14 +14,43 @@ const strings = {
 const config = {}
 
 const createParams = (key, value, config = {}) => {
-  return {key, value, type: value.type, config}
+  const property = {
+    key,
+    ...value
+  }
+  return {property, config}
+}
+
+const $create = (key, value, config) => {
+  const params = createParams(key, value, config)
+  return resolve(params)
 }
 
 const create = (key, config) => {
-  return toString(createParams(key, strings[key], config))
+  const value = strings[key]
+  if (!value) {
+    throw new Error(`no such string entry: ${key}`)
+  }
+  return $create(key, value, config)
 }
 
-describe('toString', () => {
+describe('isString', () => {
+  describe('type: string', () => {
+    const check = isString({type: 'string'})
+    test('is valid', () => {
+      expect(check).toBe(true)
+    })
+  })
+
+  describe('type: string', () => {
+    const check = isString({type: 'boolean'})
+    test('is invalid', () => {
+      expect(check).toBe(false)
+    })
+  })
+})
+
+describe('String', () => {
   test('invalid type', () => {
     const str = create('invalid')
     expect(str).toBeFalsy()
@@ -36,9 +65,9 @@ describe('toString', () => {
     })
 
     test('creates basic type shape', () => {
-      expect(shape.name).toEqual('greeting')
-      expect(shape.is).toEqual('primitive')
-      expect(shape.type.basic).toEqual('String')
+      expect(shape.key).toEqual('greeting')
+      expect(shape.category).toEqual('primitive')
+      expect(shape.resolvedTypeName).toEqual('String')
     })
   })
 })
@@ -54,7 +83,7 @@ describe('configured with custom scalar type', () => {
   const str = create('greeting', config)
   const {shape} = str
 
-  test('creates type with custom scalar date', () => {
+  test('creates type with custom scalar string', () => {
     expect(str.overrideType).toEqual(undefined)
     expect(str._meta).toEqual({
       types: {
@@ -63,9 +92,8 @@ describe('configured with custom scalar type', () => {
     })
     expect(str.baseType).toEqual('MyString')
     expect(str._types).toEqual({string: 'MyString'})
-
-    expect(shape.name).toEqual('greeting')
-    expect(shape.is).toEqual('primitive')
-    expect(shape.type.basic).toEqual('MyString')
+    expect(shape.key).toEqual('greeting')
+    expect(shape.category).toEqual('primitive')
+    expect(shape.resolvedTypeName).toEqual('MyString')
   })
 })

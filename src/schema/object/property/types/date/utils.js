@@ -3,12 +3,12 @@ function hasDateFormat(format) {
 }
 
 function extractFormat(obj) {
-  return obj.format || obj.value.format
+  return obj.format
 }
 
 function isDate(obj) {
   const format = extractFormat(obj)
-  return obj.type === 'string' && hasDateFormat(format)
+  return hasDateFormat(format) // && obj.type === 'string'
 }
 
 module.exports = {

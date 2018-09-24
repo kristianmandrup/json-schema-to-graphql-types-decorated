@@ -1,8 +1,9 @@
 const {PrimitiveType} = require('../primitive')
 const {isDate} = require('./utils')
+const {camelize} = require('../utils')
 
-function resolve(obj) {
-  return isDate(obj) && DateType.create(obj)
+function resolve({property, config}) {
+  return isDate(property) && DateType.create({property, config})
 }
 
 class DateType extends PrimitiveType {
@@ -10,7 +11,7 @@ class DateType extends PrimitiveType {
     return 'date'
   }
 
-  get propTypeName() {
+  get resolvedTypeName() {
     return camelize(this._types.date || 'Date')
   }
 
