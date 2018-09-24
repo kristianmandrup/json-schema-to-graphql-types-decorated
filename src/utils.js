@@ -36,10 +36,25 @@ const isObjectType = (obj) => {
   return obj === Object(obj);
 }
 
+const isFunctionType = (obj) => {
+  return typeof obj === 'function'
+}
+
+const isArrayType = (obj) => {
+  return Array.isArray(obj)
+}
+
+function isCollection(col) {
+  return isArrayType(col) || isObjectType(col)
+}
+
 module.exports = {
   assign,
   assignAt,
   capitalize,
   camelize,
+  isFunctionType,
+  isCollection,
+  isArrayType,
   isObjectType
 }

@@ -1,5 +1,9 @@
-const {PropertyResolver} = require('../../../property-entity')
+const {createPropertyEntityResolver} = require('../../../property-entity')
 const {Base} = require('../../../../../../base')
+
+const createItemsResolver = ({items, config}) => {
+  return new ItemsResolver({items, config})
+}
 
 class ItemsResolver extends Base {
   constructor({items, config}) {
@@ -22,10 +26,11 @@ class ItemsResolver extends Base {
   }
 
   typeResolver(item) {
-    return new PropertyResolver({property: item, config: this.config}).resolve()
+    return createPropertyEntityResolver({property: item, config: this.config}).resolve()
   }
 }
 
 module.exports = {
+  createItemsResolver,
   ItemsResolver
 }

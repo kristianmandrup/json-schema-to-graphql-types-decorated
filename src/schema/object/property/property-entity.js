@@ -1,5 +1,6 @@
 const {resolvers} = require('./types')
 const {Base} = require('../../../base')
+const {isObjectType, isFunctionType} = require('../../../utils')
 
 const createPropertyEntityResolver = ({property, config}) => {
   return new PropertyEntityResolver({property, config})
@@ -20,11 +21,33 @@ class PropertyEntityResolver extends Base {
   }
 
   isValid() {
-    return true
+    return this.isValidProperty || this.isValidResolvers
+  }
+
+  get isValidProperty() {
+    return isObjectType(this.property)
+  }
+
+  get isValidResolvers() {
+    return isObjectType(this.resolvers)
   }
 
   validate() {
-    this.error('resolve', 'Not a valid schema property')
+    this.validateResolvers() && this.validateProperty()
+  }
+
+  validateResolvers() {
+    !this.isValidResolvers && this.error('resolve', 'Invalid resolvers. Must be an object, where each entry is a resolver function')
+  }
+
+  validateResolver(resolver, key) {
+    !isFunctionType(resolver) && this.error('resolve', `Invalid resolver [${key}]. Must be a function. Was ${typeof resolver}`)
+    return true
+  }
+
+  validateProperty() {
+    !isValidProperty && this.error('resolve', `Invalid property. Must be an object. Was ${typeof this.property}`)
+    return true
   }
 
   resolve() {
@@ -33,7 +56,8 @@ class PropertyEntityResolver extends Base {
       .keys(resolvers)
       .reduce((acc, key) => {
         const resolver = resolvers[key]
-        acc[key] = resolver(this.property)
+        this.validateResolver(resolver, key)
+        acc[key] = resolver({property: this.property, config: this.config})
         return acc
       }, {})
 
@@ -55,8 +79,11 @@ class PropertyEntityResolver extends Base {
       sender: this.sender,
       payload: payload
     }
-    if (!this.dispatcher) 
+    if (!this.dispatcher) {
       this.warn('dispatch', 'missing dispatcher')
+      return
+    }
+
     this
       .dispatcher
       .dispatch(event)
