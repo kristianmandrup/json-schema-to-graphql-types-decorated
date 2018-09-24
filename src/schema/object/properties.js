@@ -12,6 +12,12 @@ class PropertiesResolver extends Base {
     this.ownerName = ownerName
     this.properties = properties
     this.config = config
+    this.validate()
+  }
+
+  validate() {
+    !this.ownerName && this.error('validate', 'object is missing required ownerName entry')
+    return true
   }
 
   resolve() {
