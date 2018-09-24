@@ -72,12 +72,20 @@ class $BaseType extends Base {
 
   extractDecorators() {
     const {namespace} = this.config
-    const ns = this.value[namespace] || {}
-    const ownDecorators = ns.decorators || $graphql
+    const {ownerName, key} = this
+    this.ownMeta = (namespace
+      ? this.property[namespace]
+      : this.property) || {}
+    const ownDecorators = this.ownMeta.decorators
     const decorators = this.config.decorators || {}
-    this.classDecorators = (decorators[type] || {})[key]
-    this.propDecorators = decorators[key]
-    this.decorators = ownDecorators || this.classDecorators || this.propDecorators
+    this.classDecorators = (decorators[ownerName] || {})[key] || {}
+    this.propDecorators = decorators[key] || {}
+    // merge by precedence: own, class, prop, so own overrides all
+    this.decorators = {
+      ...this.propDecorators,
+      ...this.classDecorators,
+      ...ownDecorators
+    }
   }
 
   get sender() {

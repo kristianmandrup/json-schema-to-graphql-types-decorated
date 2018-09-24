@@ -71,25 +71,41 @@ const rootSchema = {
   }
 }
 
+const property = {
+  format,
+  required: true,
+  ownerName,
+  type,
+  format,
+  name,
+  required,
+  key,
+  $ref
+}
+
+const propDecObj = {
+  classDec: 1,
+  propDec: 3
+}
+
+const classDecObj = {
+  classDec: 2
+}
+
+const config = {
+  namespace: 'db',
+  resolveSchema,
+  rootSchema,
+  decorators: {
+    [ownerName]: {
+      [key]: classDecObj
+    },
+    [key]: propDecObj
+  }
+}
+
 describe('$BaseType', () => {
-  const config = {
-    resolveSchema,
-    rootSchema
-  }
-
-  const property = {
-    format,
-    required: true,
-    ownerName,
-    type,
-    format,
-    name,
-    required,
-    key,
-    $ref
-  }
-
-  describe.only('constructor', () => {
+  describe('constructor', () => {
     const base = new $BaseType({property, config})
 
     test('key', () => {
@@ -131,18 +147,36 @@ describe('$BaseType', () => {
     test('reference', () => {
       expect(base.reference).toBe(reference)
     })
+
+    describe('extractDecorators', () => {
+      base.extractDecorators()
+
+      test('ownMeta', () => {
+        expect(base.ownMeta).toEqual({})
+      })
+
+      test('classDecorators extracted', () => {
+        expect(base.classDecorators).toEqual({classDec: 2})
+      })
+
+      test('propDecorators extracted', () => {
+        expect(base.propDecorators).toEqual({classDec: 1, propDec: 3})
+      })
+
+      test('decorators merged', () => {
+        expect(base.decorators).toEqual({classDec: 2, propDec: 3})
+      })
+    })
+
+    describe('extractMeta', () => {})
+
+    describe('resolveAndMergeReferenced', () => {})
+
+    describe('initialize', () => {})
   })
-
-  describe('extractDecorators', () => {})
-
-  describe('extractMeta', () => {})
-
-  describe('resolveAndMergeReferenced', () => {})
-
-  describe('initialize', () => {})
 })
 
-describe('BaseType', () => {
+describe.skip('BaseType', () => {
   describe('sender', () => {})
 
   describe('onEntity', () => {})
