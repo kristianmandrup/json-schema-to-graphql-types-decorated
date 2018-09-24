@@ -214,27 +214,70 @@ describe.only('BaseType', () => {
     })
   })
 
-  describe('defaultType', () => {})
+  test('defaultType', () => {
+    expect(base.defaultType).toEqual('any')
+  })
 
-  describe('baseType', () => {})
+  test('baseType', () => {
+    expect(base.baseType).toEqual('any')
+  })
 
-  describe('fullClassName', () => {})
+  test('fullClassName', () => {
+    expect(base.fullClassName).toEqual('PersonKitty')
+  })
 
-  describe('refTypeName', () => {})
+  test('refTypeName', () => {
+    expect(base.refTypeName).toEqual('Car')
+  })
 
-  describe('resolvedTypeName', () => {})
+  test('resolvedTypeName', () => {
+    expect(base.resolvedTypeName).toEqual('Car')
+  })
 
-  describe('collection', () => {})
+  test('collection', () => {
+    expect(base.collection).toBeFalsy()
+  })
 
-  describe('list', () => {})
+  test('list', () => {
+    expect(base.list).toBeFalsy()
+  })
 
-  describe('dictionary', () => {})
+  test('dictionary', () => {
+    expect(base.dictionary).toBeFalsy()
+  })
 
-  describe('configType', () => {})
+  test('configType', () => {
+    expect(base.configType).toBeFalsy()
+  })
 
-  describe('overrideType', () => {})
+  test('overrideType', () => {
+    expect(base.overrideType).toBeFalsy()
+  })
 
-  describe('refType', () => {})
+  describe('refType', () => {
+    test('reference', () => {
+      expect(base.refType).toEqual('reference')
+    })
 
-  describe('shape', () => {})
+    test('embedded', () => {
+      base.reference = undefined
+      expect(base.refType).toEqual('embedded')
+    })
+
+    test('category', () => {
+      expect(base.category).toEqual('primitive')
+    })
+
+    test('is', () => {
+      expect(base.is).toBeUndefined()
+    })
+  })
+
+  describe('shape', () => {
+    test('is a snapshot object with many keys', () => {
+      const {shape} = base
+      expect(typeof shape).toEqual('object')
+      expect(Object.keys(shape).length > 10).toBeTruthy()
+    })
+  })
 })

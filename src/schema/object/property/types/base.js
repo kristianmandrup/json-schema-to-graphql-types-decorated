@@ -158,6 +158,10 @@ class $BaseType extends Base {
     }
   }
 
+  get category() {
+    return 'primitive'
+  }
+
   get defaultType() {
     return 'any'
   }
@@ -168,7 +172,7 @@ class $BaseType extends Base {
 
   // used for embedded objects if otherwise unable to determine a good type name
   get fullClassName() {
-    return camelize([this.ownerName, this.key].join())
+    return camelize([this.ownerName, this.key].join('_'))
   }
 
   get refTypeName() {
@@ -176,7 +180,7 @@ class $BaseType extends Base {
   }
 
   get resolvedTypeName() {
-    return this.baseType || this.refTypeName
+    return this.refTypeName || this.baseType
   }
 
   get collection() {
