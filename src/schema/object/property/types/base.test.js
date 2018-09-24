@@ -1,8 +1,6 @@
 const {BaseType, $BaseType, checkType} = require('./base')
 
-const format = 'date-time'
-
-describe.only('checkType', () => {
+describe('checkType', () => {
   describe('not an object', () => {
     test('throws', () => {
       try {
@@ -54,14 +52,61 @@ describe.only('checkType', () => {
   })
 })
 
+const format = 'date-time'
+const ownerName = 'person'
+const type = 'string'
+const name = 'myName'
+const required = true
+const key = 'kitty'
+const $ref = '#/definitions/car'
+const reference = $ref
+const resolveSchema = () => {
+  type : 'number'
+}
+const rootSchema = {
+  definitions: {
+    car: {
+      type: 'object'
+    }
+  }
+}
+
 describe('$BaseType', () => {
-  const property = {
-    format,
-    required: true
+  const config = {
+    resolveSchema,
+    rootSchema
   }
 
-  describe('constructor', () => {
-    const base = new $BaseType(property, config)
+  const property = {
+    format,
+    required: true,
+    ownerName,
+    type,
+    format,
+    name,
+    required,
+    key,
+    $ref
+  }
+
+  describe.only('constructor', () => {
+    const base = new $BaseType({property, config})
+
+    test('key', () => {
+      expect(base.key).toBe(key)
+    })
+
+    test('name', () => {
+      expect(base.name).toBe(name)
+    })
+
+    test('ownerName', () => {
+      expect(base.ownerName).toBe(ownerName)
+    })
+
+    test('type', () => {
+      expect(base.type).toBe(type)
+    })
 
     test('format', () => {
       expect(base.format).toEqual(format)
@@ -69,6 +114,22 @@ describe('$BaseType', () => {
 
     test('required', () => {
       expect(base.required).toBe(true)
+    })
+
+    test('config', () => {
+      expect(base.config).toBe(config)
+    })
+
+    test('resolveSchema', () => {
+      expect(base.resolveSchema).toBe(resolveSchema)
+    })
+
+    test('rootSchema', () => {
+      expect(base.rootSchema).toBe(rootSchema)
+    })
+
+    test('reference', () => {
+      expect(base.reference).toBe(reference)
     })
   })
 

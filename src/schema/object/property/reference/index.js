@@ -1,3 +1,1 @@
-module.exports = {
-  DefinitionRef: require('./definition-ref')
-}
+module.exports = require('./definition-ref')

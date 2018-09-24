@@ -1,5 +1,5 @@
 const {Base} = require('../../../../base')
-const {DefinitionRef} = require('../reference')
+const {createDefinitionRefResolver} = require('../reference')
 const {camelize} = require('./utils')
 
 function checkType(property, type) {
@@ -11,24 +11,42 @@ function checkType(property, type) {
 class PropertyError extends Error {}
 
 class $BaseType extends Base {
-  constructor({property, config}) {
+  constructor({
+    property,
+    config = {}
+  } = {}) {
     super(config)
-
-    let {ownerName, type, value, key} = property
-    config = config || {}
+    let {
+      ownerName,
+      type,
+      format,
+      name,
+      required,
+      key,
+      $ref
+    } = property
     this.property = property
     this.key = key
-    this.name = value.name || key
+    this.name = name
     this.ownerName = ownerName
-    this._type = type
-    this.value = value
-    this.format = value.format
-    this.required = value.required
+    this.type = type
+    this.format = format
+    this.required = required
     this.config = config
-    this.resolveSchema = config.resolveSchema
-    this.$schemaRef = config.$schemaRef
-    this.reference = this.value.$ref
-    this.defRef = new DefinitionRef({schema: this.$schemaRef, reference: this.reference})
+
+    const {resolveSchema, rootSchema} = config
+    this.resolveSchema = resolveSchema
+    this.rootSchema = rootSchema
+    this.reference = $ref
+  }
+
+  get defRef() {
+    const args = {
+      schema: this.rootSchema,
+      reference: this.reference
+    }
+    this._defRef = this._defRef || createDefinitionRefResolver(args)
+    return this._defRef
   }
 
   initialize() {
