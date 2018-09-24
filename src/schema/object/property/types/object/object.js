@@ -1,6 +1,6 @@
 const {BaseType} = require('../base')
-const {camelize} = require('../utils')
 const {Nested} = require('./nested')
+const {NestedObjectTypeName} = require('./type-name')
 
 // no reason to test for properties, as we might be using $ref instead
 function isObject(property) {
@@ -10,7 +10,7 @@ function isObject(property) {
 function resolve({property, config}) {
   return isObject(property) && ObjectType
     .create({property, config})
-    .resolveNested()
+    .resolve()
 }
 
 // Allow recursive schema
@@ -35,9 +35,33 @@ class ObjectType extends BaseType {
     return 'Object'
   }
 
+  resolve() {
+    this.resolveType()
+    this.resolveNested()
+    return this
+  }
+
+  resolveType() {
+    const typeName = this.resolveTypeName()
+    if (!typeName) 
+      return
+    this.dispatch({
+      payload: {
+        ownerName: this.ownerName,
+        propertyName: this.key,
+        typeName,
+        object: true
+      }
+    })
+  }
+
+  get resolveTypeName() {
+    this.objectTypeNameResolver = new ObjectTypeNameResolver({object: this, config: this.config})
+    return objectTypeNameResolver.resolve()
+  }
+
   get resolvedTypeName() {
-    const name = this.refTypeName || this.name || this.fullName
-    return name && camelize(name) || this.defaultType
+    return this.objectTypeNameResolver.typeName
   }
 
   static create(obj) {
