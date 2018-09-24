@@ -1,4 +1,4 @@
-const {PropertyResolver} = require('../../../property')
+const {PropertyResolver} = require('../../../property-entity')
 
 class ItemsResolver {
   constructor({items, config}) {

@@ -1,10 +1,10 @@
 const {resolvers} = require('./types')
 
-const createProperty = ({property, config}) => {
-  return new PropertyResolver({property, config})
+const createPropertyEntityResolver = ({property, config}) => {
+  return new PropertyEntityResolver({property, config})
 }
 
-class PropertyResolver extends Base {
+class PropertyEntityResolver extends Base {
   constructor({property, config}) {
     this.property = property
     this.config = config
@@ -14,7 +14,7 @@ class PropertyResolver extends Base {
   }
 
   get sender() {
-    return 'propertyResolver'
+    return 'propertyEntityResolver'
   }
 
   isValid() {
@@ -91,6 +91,6 @@ class PropertyResolver extends Base {
 }
 
 module.exports = {
-  createProperty,
-  PropertyResolver
+  createPropertyEntityResolver,
+  PropertyEntityResolver
 }

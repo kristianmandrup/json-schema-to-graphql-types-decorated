@@ -14,4 +14,9 @@ class PrimaryColumnDecorator extends ColumnDecorator {
       ? 'PrimaryColumn'
       : 'PrimaryGeneratedColumn'
   }
+
+  get args() {
+    return []
+  }
 }
+ColumnDecorator

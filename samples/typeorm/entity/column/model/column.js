@@ -4,6 +4,7 @@ class ColumnModel {
     this.config = config
     this.value = shape.value
     this.db = this.value.db || {}
+    this.decorators = new
   }
 
   // TRY: always except if explicitly false
