@@ -56,9 +56,7 @@ class $BaseType extends Base {
   }
 
   resolveAndMergeReferenced() {
-    const remoteObject = this
-      .defRef
-      .resolveObjct()
+    const remoteObject = this.defRef.refObject
     this.value = {
       ...this.value,
       remoteObject
@@ -92,7 +90,7 @@ class $BaseType extends Base {
     return 'propertyType'
   }
 
-  onEntity(entity) {
+  onEntity(entity = {}) {
     const event = {
       sender: this.sender,
       payload: {
@@ -100,20 +98,27 @@ class $BaseType extends Base {
       }
     }
     this.dispatch(event)
+    this.lastSent = event
   }
 
-  dispatch({payload}) {
+  dispatch(payload = {}) {
     const event = {
       sender: this.sender,
       payload: payload
     }
 
-    if (!this.dispatcher) 
-      this.warn('dispatch', 'missing dispatcher')
+    if (!this.dispatcher) {
+      return this.warn('dispatch', 'missing dispatcher')
+    }
+
+    if (!this.dispatcher.dispatch) {
+      return this.error('dispatch', 'Invalid dispatcher. Missing dispatch method')
+    }
 
     this
       .dispatcher
       .dispatch(event)
+    this.lastDispatchedEvent = event
   }
 
   get valid() {

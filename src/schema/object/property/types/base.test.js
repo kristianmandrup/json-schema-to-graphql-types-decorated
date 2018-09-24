@@ -176,12 +176,43 @@ describe('$BaseType', () => {
   })
 })
 
-describe.skip('BaseType', () => {
-  describe('sender', () => {})
+describe.only('BaseType', () => {
+  const base = new BaseType({property, config})
+  const entity = {
+    name: 'x'
+  }
+  const payload = {
+    type: 'Car'
+  }
 
-  describe('onEntity', () => {})
+  test('sender', () => {
+    expect(base.sender).toEqual('propertyType')
+  })
 
-  describe('dispatch', () => {})
+  describe('onEntity', () => {
+    base.onEntity(entity)
+    expect(base.lastSent.payload).toEqual(entity)
+  })
+
+  describe('dispatch', () => {
+    beforeEach(() => {
+      base.lastDispatchedEvent = undefined
+    })
+
+    test('has dispatcher: dispatches', () => {
+      base.dispatcher = {
+        dispatch: () => 'x'
+      }
+      base.dispatch(payload)
+      expect(base.lastDispatchedEvent.payload).toBe(payload)
+    })
+
+    test('no dispatcher: no dispatch', () => {
+      base.dispatcher = null
+      base.dispatch(payload)
+      expect(base.lastDispatchedEvent).toBeUndefined()
+    })
+  })
 
   describe('defaultType', () => {})
 
