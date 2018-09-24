@@ -2,7 +2,7 @@ const {Base} = require('../../base')
 const {property} = require('./propert')
 const {createPropertyEntityResolver} = property
 
-const createProperties = ({object, config}) => {
+const createPropertiesResolver = ({object, config}) => {
   return new PropertiesResolver({object, config})
 }
 
@@ -38,5 +38,6 @@ class PropertiesResolver extends Base {
 }
 
 module.exports = {
+  createPropertiesResolver,
   PropertiesResolver
 }

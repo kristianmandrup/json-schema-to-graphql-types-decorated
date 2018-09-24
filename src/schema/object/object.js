@@ -1,7 +1,7 @@
 const {Base} = require('../../base')
 const {normalizeRequired} = require('./normalize')
 const {camelize} = require('./utils')
-const {createProperties} = require('./properties')
+const {createPropertiesResolver} = require('./properties')
 
 const createSchemaObject = ({schema, value, config, opts}) => {
   return new SchemaObject({schema, value, config, opts})
@@ -17,14 +17,24 @@ class SchemaObject extends Base {
     this.properties = $schema.properties
     this.required = $schema.required || []
     this.definitions = $schema.definitions
+
+    if (this.isSchema) {
+      this.config.$schemaRef = $schema
+    }
+  }
+
+  get type() {
+    return this.isSchema
+      ? 'schema'
+      : 'object'
   }
 
   get hasPropertiesObject() {
-    utils.isObjectType(this.properties)
+    return utils.isObjectType(this.properties)
   }
 
   validateProperties() {
-    !this.hasPropertiesObject && this.error('schema', 'must have a properties object')
+    !this.hasPropertiesObject && this.error(this.type, 'must have a properties object')
     return true
   }
 
@@ -41,17 +51,21 @@ class SchemaObject extends Base {
       ownerName: name,
       properties: this.properties
     }
-    const properties = createProperties({object, config})
-    return properties.resolve()
+    const resolver = createPropertiesResolver({object, config})
+    return resolver.resolve()
   }
 
   normalize() {
-    return this.shouldNormalize() && this.normalizeProps()
+    this.shouldNormalize() && this.normalizeProps()
   }
 
   // if schema is received via value, we must assume it comes from a recursive
   // object resolve
   get shouldNormalize() {
+    return this.isSchema
+  }
+
+  get isSchema() {
     return !this.value
   }
 
