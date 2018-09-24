@@ -54,6 +54,8 @@ The following examples act to demonstrate how you might go about using this infr
 - [GraphQL example](./samples/graphql/GraphQL.md)
 - [TypeORM example](./samples/typeorm/TypeORM.md)
 
+Note: As soon as we have a solid foundation and working examples we will move these into their own projects and publish them on [npm](http://npmjs.org)
+
 ## Testing
 
 Uses [jest](jestjs.io/) for unit testing.
