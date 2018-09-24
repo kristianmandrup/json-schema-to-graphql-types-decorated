@@ -2,7 +2,7 @@ const {BaseType} = require('../base')
 const {camelize} = require('../utils')
 
 function isEnum(property) {
-  return Array.isArray(property.value.enum)
+  return Array.isArray(property.enum)
 }
 
 function resolve({property, config}) {
@@ -12,6 +12,10 @@ function resolve({property, config}) {
 class EnumType extends BaseType {
   get kind() {
     return 'enum'
+  }
+
+  get enum() {
+    return this.property.enum
   }
 
   get category() {
@@ -35,7 +39,6 @@ class EnumType extends BaseType {
 
   get values() {
     return this
-      .value
       .enum
       .map(val => val)
   }
