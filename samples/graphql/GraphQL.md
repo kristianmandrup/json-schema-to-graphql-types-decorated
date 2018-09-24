@@ -362,3 +362,27 @@ Thanks to the power of directives and Apollo Link, you’ll (soon) be able to re
 - [graphql-to-json-schema](https://github.com/wittydeveloper/graphql-to-json-schema) GraphQL Schema to JSON Schema
 - [json-schema-to-graphql-types](https://github.com/lifeomic/json-schema-to-graphql-types)
 - [jsonschema-to-graphql](https://github.com/ManjunathaN/jsonschema-to-graphql)
+
+### Union types
+
+Add support for [union types](https://medium.com/the-graphqlhub/graphql-tour-interfaces-and-unions-7dd5be35de0d)
+
+Useful for arrays that can have multiple types under `items`.
+
+```graphql
+union SearchResult = User | Movie | Book
+```
+
+### Enum
+
+Add support for `enum` type, see [How to design GraphQL queries and mutations: enum type](https://medium.com/graphql-mastery/how-to-design-graphql-mutations-and-queries-part-2-enums-ebb01613832)
+
+The `enum` type can be used as a primitive value according to GraphQL specs.
+
+```js
+enum TaskStateEnum {
+  assigned
+  unassigned
+  inProgress
+}
+```

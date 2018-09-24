@@ -5,11 +5,6 @@
 Under development, but mostly complete. Use the classes as a base for your own infrastructure.
 Check the tests and markdown files (for each file) for in-depth API documentation.
 
-## Examples
-
-- [GraphQL example](./samples/graphql/GraphQL.md)
-- [TypeORM example](./samples/typeorm/TypeORM.md)
-
 ## Quick start
 
 - npm: `npm install json-schema-model-builder -S`
@@ -33,15 +28,39 @@ const rendered = built.render();
 console.log({ rendered });
 ```
 
+## Design & Architecture
+
+This project is a result of multiple efforts trying to generate source code or derive models from JSON schemas. There is a need for a framework with a set of well tested, battle-tested building blocks to make this much easier. The goal is to achieve true _declarative model driven development_.
+
+Your domain and action models across your stack should automatically be derived from the same underlying declarative model (project blueprint).
+
+### Main concepts
+
+Infrastructure delivered by library
+
+- Builder: builds a set of entities identified by resolvers and dispatches events as needed
+- Dispatcher: Dispatches select events to state for update of model
+- State: builds collections of entities and a directed graph from incoming model events
+
+Your concerns
+
+- Target model: target model to be built from state can either subscribe to the State or process the State when builder has finished
+- Render: Render can be done when Target model has been built
+
+The following examples act to demonstrate how you might go about using this infrastructure to generate source code or models.
+
+### Examples
+
+- [GraphQL example](./samples/graphql/GraphQL.md)
+- [TypeORM example](./samples/typeorm/TypeORM.md)
+
 ## Testing
 
 Uses [jest](jestjs.io/) for unit testing.
 
-Please help add more test coverage :)
+Please help add more/better test coverage :)
 
 ### Run tests in watch mode
-
-Also lets you filter which tests to run (press `p`)
 
 ```bash
 $ npm run test:watch
@@ -55,37 +74,7 @@ $ npm run test
 
 ## TODO
 
-### Union types
-
-Add support for [union types](https://medium.com/the-graphqlhub/graphql-tour-interfaces-and-unions-7dd5be35de0d)
-
-Especially useful for arrays that can have multiple types under `items`.
-
-```graphql
-union SearchResult = User | Movie | Book
-```
-
-### Enum
-
-WIP
-
-Add good support for `enum` type, see [How to design GraphQL queries and mutations: enum type](https://medium.com/graphql-mastery/how-to-design-graphql-mutations-and-queries-part-2-enums-ebb01613832)
-
-The enum type is the second type in the GraphQL specification that can be used as a primitive value.
-
-```js
-enum TaskStateEnum {
-  assigned
-  unassigned
-  inProgress
-}
-```
-
-### Use to generate TypeORM models
-
-We should be able to use the same infrastructure to generate TypeORM entity model classes with property types and relationship decorators.
-
-Note: Would likely be better to create a directed graph from JSON schema and build from there ;)
+- State subscribers
 
 ## Author
 
