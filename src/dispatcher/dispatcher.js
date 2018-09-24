@@ -1,5 +1,12 @@
-class Dispatcher {
+const {Base} = require('../base')
+
+const createDispatcher = ({state, config}) => {
+  return new Dispatcher({state, config})
+}
+
+class Dispatcher extends Base {
   constructor({state, config}) {
+    super(config)
     this.state = state
     this.config = config
   }
@@ -13,5 +20,6 @@ class Dispatcher {
 }
 
 module.exports = {
+  createDispatcher,
   Dispatcher
 }
