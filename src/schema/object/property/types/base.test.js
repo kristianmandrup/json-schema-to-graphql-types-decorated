@@ -12,19 +12,13 @@ describe('checkType', () => {
     })
   })
 
-  describe('object with no type and no value', () => {
+  describe('empty property obj', () => {
     test('is false', () => {
       expect(checkType({}, 'string')).toBeFalsy()
     })
   })
 
-  describe('has invalid type and no value', () => {
-    test('is false', () => {
-      expect(checkType({}, 'string')).toBeFalsy()
-    })
-  })
-
-  describe('has correct type and no value', () => {
+  describe('has correct type', () => {
     test('is true', () => {
       expect(checkType({
         type: 'string'
@@ -32,22 +26,11 @@ describe('checkType', () => {
     })
   })
 
-  describe('has wrong type and string value', () => {
+  describe('has wrong type', () => {
     test('is false', () => {
       expect(checkType({
-        type: 'number',
-        value: 'x'
+        type: 'number'
       }, 'string')).toBeFalsy()
-    })
-  })
-
-  describe('has no type and object value with correct type', () => {
-    test('is true', () => {
-      expect(checkType({
-        value: {
-          type: 'string'
-        }
-      }, 'string')).toBeTruthy()
     })
   })
 })
