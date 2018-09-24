@@ -1,5 +1,5 @@
 const {BaseType} = require('../base')
-const {ItemsResolver} = require('./items/item-type')
+const {ItemsResolver} = require('./items')
 // const {isObjectType} = require('../utils')
 
 function isArray(property) {
@@ -14,13 +14,12 @@ function resolve({property, config}) {
 class ArrayType extends BaseType {
   constructor({property, config}) {
     super({property, config})
-    this.items = this.value.items
-    this._type = this.items.type
-    this.resolveNested()
+    this.items = this.items || []
+    this.resolveTypeRefs()
   }
 
   get itemsResolver() {
-    return new ItemsResolver({items})
+    return new ItemsResolver({items: this.items})
   }
 
   get kind() {
@@ -28,9 +27,14 @@ class ArrayType extends BaseType {
   }
 
   get refTypeName() {
-    this.refTypeNames.length > 1
+    console.log('refTypeName', {refTypeNames: this.refTypeNames})
+    this.refTypeNames.length === 1
       ? `${this.fullClassName}Item`
-      : this.refTypeName
+      : this.unionTypeName
+  }
+
+  get unionTypeName() {
+    return this.refTypeNames[0]
   }
 
   get refTypeNames() {
@@ -52,9 +56,7 @@ class ArrayType extends BaseType {
   }
 
   resolveTypeRefs() {
-    const typeRefs = this
-      .arrayTypeRefs
-      .resolve()
+    const typeRefs = this.refTypeNames
     this.onTypeRefs(...typeRefs)
     return this
   }

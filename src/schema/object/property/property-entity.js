@@ -1,4 +1,5 @@
 const {resolvers} = require('./types')
+const {Base} = require('../../../base')
 
 const createPropertyEntityResolver = ({property, config}) => {
   return new PropertyEntityResolver({property, config})
@@ -6,6 +7,7 @@ const createPropertyEntityResolver = ({property, config}) => {
 
 class PropertyEntityResolver extends Base {
   constructor({property, config}) {
+    super(config)
     this.property = property
     this.config = config
     // this.state = config.state

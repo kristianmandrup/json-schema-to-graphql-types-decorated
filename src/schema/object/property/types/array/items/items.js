@@ -1,7 +1,9 @@
 const {PropertyResolver} = require('../../../property-entity')
+const {Base} = require('../../../../../../base')
 
-class ItemsResolver {
+class ItemsResolver extends Base {
   constructor({items, config}) {
+    super(config)
     this.items = items
     this.config = config
   }
@@ -9,7 +11,7 @@ class ItemsResolver {
   resolve() {
     return this
       .items
-      .map(this.typeResolver.bind(this))
+      .map(this.resolveItem.bind(this))
   }
 
   resolveItem(item) {
@@ -19,7 +21,7 @@ class ItemsResolver {
       .resolvedTypeName
   }
 
-  get typeResolver(item) {
+  typeResolver(item) {
     return new PropertyResolver({property: item, config: this.config}).resolve()
   }
 }

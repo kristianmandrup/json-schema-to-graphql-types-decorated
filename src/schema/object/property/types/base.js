@@ -25,9 +25,11 @@ class $BaseType extends Base {
       key,
       $ref
     } = property
+    console.log({name})
+
     this.property = property
     this.key = key
-    this.name = name
+    this.name = name || key
     this.ownerName = ownerName
     this.type = type
     this.format = format
@@ -137,7 +139,9 @@ class $BaseType extends Base {
       config: this.config, // the full config
       value: this.value, // the full property value
       jsonPropType: this.type, // raw
+      type: this.type,
       expandedType: this.kind, // string, number, enum, date, ...
+      kind: this.kind,
 
       is: this.is, // custom
       category: this.category, // primitive, enum or object
@@ -154,6 +158,7 @@ class $BaseType extends Base {
       refTypeName: this.refTypeName,
 
       key: this.key,
+      name: this.name,
 
       valid: Boolean(this.valid),
       required: Boolean(this.required),

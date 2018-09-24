@@ -1,1 +1,1 @@
-module.export = require('./items')
+module.exports = require('./items')

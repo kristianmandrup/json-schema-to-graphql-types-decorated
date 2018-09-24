@@ -1,4 +1,4 @@
-const {toArray} = require('./array')
+const {resolve, isArray} = require('./array')
 
 const arrays = {
   invalid: {
@@ -14,7 +14,7 @@ const arrays = {
           "name": "Account",
           properties: {
             "name": {
-              "type": "string"
+              "type": "array"
             }
           }
         }
@@ -36,16 +36,41 @@ const arrays = {
 const config = {}
 
 const createParams = (key, value, config = {}) => {
-  return {key, value, type: value.type, config}
+  const property = {
+    key,
+    ...value
+  }
+  return {property, config}
 }
 
 const $create = (key, value, config) => {
-  return toArray(createParams(key, value, config))
+  const params = createParams(key, value, config)
+  return resolve(params)
 }
 
 const create = (key, config) => {
-  return $create(key, arrays[key], config)
+  const value = arrays[key]
+  if (!value) {
+    throw new Error(`no such array entry: ${key}`)
+  }
+  return $create(key, value, config)
 }
+
+describe('isArray', () => {
+  describe('type: array', () => {
+    const check = isArray({type: 'array'})
+    test('is valid', () => {
+      expect(check).toBe(true)
+    })
+  })
+
+  describe('type: array', () => {
+    const check = isArray({type: 'boolean'})
+    test('is invalid', () => {
+      expect(check).toBe(false)
+    })
+  })
+})
 
 describe('toArray', () => {
   test('invalid type', () => {
@@ -58,10 +83,11 @@ describe('toArray', () => {
     const {shape} = arr
     test('creates shape with embedded type', () => {
       expect(shape.name).toEqual('accounts')
-      expect(shape.is).toEqual('type-ref')
-      expect(shape.ref).toEqual('embedded')
-      expect(shape.type.basic).toEqual('Account')
-      expect(shape.type.full).toEqual('[Account]')
+      expect(shape.expandedType).toEqual('array')
+      expect(shape.type).toEqual('array')
+      expect(shape.category).toEqual('primitive')
+      expect(shape.refType).toEqual('embedded')
+      expect(shape.resolvedTypeName).toEqual('Account')
     })
   })
 
@@ -70,11 +96,11 @@ describe('toArray', () => {
       const arr = create('defRef')
       const {shape} = arr
       expect(shape.name).toEqual('accounts')
-      expect(shape.is).toEqual('type-ref')
-      expect(shape.ref).toEqual('reference')
-      expect(shape.refType).toEqual('Account')
-      expect(shape.type.basic).toEqual('Account')
-      expect(shape.type.full).toEqual('[Account]')
+      expect(shape.type).toEqual('array')
+      expect(shape.category).toEqual('primitive')
+      expect(shape.refTypeName).toEqual('Account')
+      expect(shape.refTypeNames).toEqual(['Account'])
+      expect(shape.resolvedTypeName).toEqual('Account')
     })
   })
 })
