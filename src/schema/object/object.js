@@ -1,10 +1,13 @@
 const {Base} = require('../../base')
-const {normalizeRequired} = require('./normalize')
 const {camelize} = require('./utils')
 const {createPropertiesResolver} = require('./properties')
 
 const createSchemaObject = ({schema, value, config, opts}) => {
   return new SchemaObject({schema, value, config, opts})
+}
+
+const resolve = ({schema, value, config, opts}) => {
+  return createSchemaObject({schema, value, config, opts}).resolve()
 }
 
 class SchemaObject extends Base {
@@ -14,6 +17,7 @@ class SchemaObject extends Base {
     const $schema = schema || value
     this.config = config
     this.opts = opts || {}
+    this.type = $schema.type
     this.properties = $schema.properties
     this.required = $schema.required || []
     this.definitions = $schema.definitions
@@ -23,7 +27,7 @@ class SchemaObject extends Base {
     }
   }
 
-  get type() {
+  get schemaType() {
     return this.isSchema
       ? 'schema'
       : 'object'
@@ -33,13 +37,22 @@ class SchemaObject extends Base {
     return utils.isObjectType(this.properties)
   }
 
+  get isObject() {
+    return this.type === 'object'
+  }
+
+  validateType() {
+    !this.isObject && this.error('schema', 'must have type: object')
+    return true
+  }
+
   validateProperties() {
-    !this.hasPropertiesObject && this.error(this.type, 'must have a properties object')
+    !this.hasPropertiesObject && this.error(this.schemaType, 'must have a properties object')
     return true
   }
 
   validate() {
-    return this.validateProperties()
+    return this.validateProperties() && this.validateType()
   }
 
   resolve() {
@@ -87,5 +100,7 @@ class SchemaObject extends Base {
 }
 
 module.exports = {
+  resolve,
+  createSchemaObject,
   SchemaObject
 }

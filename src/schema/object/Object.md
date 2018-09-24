@@ -8,19 +8,37 @@
 
 ## Validate
 
-Must have `properties` object and have `type: :'object'`
+Must have `properties` object and have `type: 'object'`
+
+```js
+validate() {
+  return this.validateProperties() && this.validateType()
+}
+```
 
 ## Normalize
 
 Normalize `required` list from schema to add as `required` entry in each object property.
 
-## Create and resolve properties
+```js
+normalize() {
+  this.shouldNormalize() && this.normalizeProps()
+}
+```
+
+## Resolve properties
+
+Create an `object` with `properties` and `ownerName` (name of object)
+
+Create a `PropertiesResolver` and use it to resolve the `properties` of the `object`
 
 ```js
-const object = {
-  ownerName: name,
-  properties: this.properties
-};
-const properties = createProperties({ object, config });
-return properties.resolve();
+resolve() {
+  const object = {
+    ownerName: name,
+    properties: this.properties
+  };
+  const resolver = createPropertiesResolver({object, config})
+  return resolver.resolve()
+}
 ```

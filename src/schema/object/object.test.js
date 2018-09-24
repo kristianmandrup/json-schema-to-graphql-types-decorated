@@ -1,12 +1,14 @@
 const {createSchemaObject} = require('./object')
+const {schemas} = require('../data');
 
 const create = ({schema, value, config, opts}) => {
   return new createSchemaObject({schema, value, config, opts})
 }
 
 describe('SchemaObject', () => {
+  const schema = schemas.valid
+
   describe('schema', () => {
-    const schema = {}
     const config = {}
     const obj = create({schema, config})
 
@@ -46,9 +48,19 @@ describe('SchemaObject', () => {
   })
 
   describe('object', () => {
-    const schema = {}
-    const config = {}
-    const obj = create({value: schema, config})
+    const value = {
+      "description": "Car owned",
+      "type": "object",
+      "properties": {
+        name: {
+          type: "string"
+        }
+      }
+    }
+    const config = {
+      $schemaRef: schema
+    }
+    const obj = create({value, config})
 
     test('type', () => {
       expect(obj.type).toEqual('object')

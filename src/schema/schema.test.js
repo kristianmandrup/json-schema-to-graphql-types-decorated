@@ -1,102 +1,39 @@
-const {resolveSchema, propsToOutput} = require('./schema');
-const properties = {
-  id: {
-    type: "string",
-    generated: true,
-    unique: true,
-    required: true
-  },
-  "name": {
-    "description": "Name of the person",
-    "type": "string",
-    "graphql": {
-      "decorators": {
-        "connection": {
-          "name": "UserNames"
-        }
-      }
-    }
-  },
-  "age": {
-    "description": "Age of person",
-    "type": "integer",
-    required: true
-  },
-  "money": {
-    "description": "Money in pocket",
-    "type": "number"
-  },
-  "accounts": {
-    "description": "Bank accounts",
-    "type": "array",
-    "items": [
-      {
-        "$ref": "#/definitions/account"
-      }
-    ]
-  },
-  "numberOfChildren": {
-    "description": "Children parented",
-    "type": "array",
-    "items": [
-      {
-        "type": "number",
-        name: "childCount",
-        "enum": [0, 1, 2]
-      }
-    ]
-  },
-  "favoriteCoulor": {
-    "description": "Colors liked",
-    "type": "string",
-    "items": [
-      {
-        "type": "number",
-        name: "color",
-        "enum": ["red", "green", "blue"]
-      }
-    ]
-  },
-  "car": {
-    "description": "Car owned",
-    "type": "object",
-    "decorators": {
-      "client": true
-    },
-    "properties": {
-      name: {
-        type: "string"
-      }
-    }
+const {createSchema} = require('./schema');
+const {schemas} = require('./data');
+
+const built = {
+  enums: {},
+  types: {}
+}
+
+const defaults = {
+  config: {
+    built
   }
 }
 
+// crazy stuff to allow various ways to initialize, by string lookup in schemas
+// map etc.
+const create = (obj) => {
+  const $schema = typeof obj === 'string'
+    ? schemas[obj]
+    : obj.schema
+  const config = obj.config || defaults.config
+  typeof $schema === 'string'
+    ? schemas[schema]
+    : $schema
+  return createSchema({schema: $schema, config})
+}
+
+const resolve = (obj) => {
+  return create(obj).resolve()
+}
+
 describe('Schema', () => {
-  const schema = {
-    valid: {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "$id": "http://example.com/person.schema.json",
-      "title": "Person",
-      "name": "Person",
-      "description": "A person",
-      "type": "object",
-      properties
-    },
-    invalid: {
-      type: 'number',
-      properties: true
-    }
-  }
-
-  const built = {
-    enums: {},
-    types: {}
-  }
-
   describe('invalid schema', () => {
     test('it fails if not an object type', () => {
       try {
-        resolveSchema(schema.invalid, {}, built)
+        resolve('invalid')
       } catch (err) {
         expect(err).toBeTruthy()
       }
@@ -104,7 +41,7 @@ describe('Schema', () => {
   })
 
   describe('valid schema', () => {
-    const resolved = resolveSchema(schema.valid, {}, built)
+    const resolved = resolve('valid')
     const {enums, types} = resolved
 
     test('it resolves schema', () => {

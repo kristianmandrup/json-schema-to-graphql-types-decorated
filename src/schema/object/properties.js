@@ -20,10 +20,23 @@ class PropertiesResolver extends Base {
     return true
   }
 
-  resolve() {
-    return Object
+  resolve(force) {
+    this.resolved = (this.resolved && !force) || Object
       .keys(this.properties)
       .reduce(this.reduceProp.bind(this), {})
+
+    return this.resolved
+  }
+
+  groupByTypes() {
+    const resolvedPropMap = this.resolve()
+    const keys = Object.keys(resolvedPropMap)
+    this.grouped = this.grouped || keys.reduce((acc, key) => {
+      const entity = resolvedPropMap[key]
+      acc[entity.type] = entity.value
+      return acc
+    }, {})
+    return this.grouped
   }
 
   reduceProp(acc, key) {
