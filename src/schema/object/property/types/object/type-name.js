@@ -1,5 +1,9 @@
 const {camelize} = require('../utils')
 
+const createObjectTypeNameResolver = ({object, config}) => {
+  return new ObjectTypeNameResolver({object, config})
+}
+
 class ObjectTypeNameResolver {
   constructor({object, config}) {
     this.object = object
@@ -24,5 +28,6 @@ class ObjectTypeNameResolver {
   }
 }
 module.exports = {
+  createObjectTypeNameResolver,
   ObjectTypeNameResolver
 }

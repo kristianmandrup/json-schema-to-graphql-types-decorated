@@ -1,4 +1,4 @@
-const {toObject} = require('./object')
+const {resolve} = require('./object')
 
 const objs = {
   invalid: {
@@ -29,15 +29,14 @@ const createParams = (key, value, config = {}) => {
 }
 
 const $create = (key, value, config) => {
-  return toObject(createParams(key, value, config))
+  return resolve(createParams(key, value, config))
 }
 
 const create = (key, config) => {
   return $create(key, objs[key], config)
 }
 
-describe('toObject', () => {
-
+describe('resolve', () => {
   test('invalid type', () => {
     const obj = create('invalid')
     expect(obj).toBeFalsy()
@@ -58,20 +57,20 @@ describe('toObject', () => {
       const obj = create('account')
       const {shape} = obj
       expect(shape.valid).toBe(true)
-      expect(shape.is).toEqual('type-ref')
-      expect(shape.ref).toEqual('embedded')
-      expect(shape.type.basic).toEqual('Account')
+      expect(shape.is).toEqual('type')
+      expect(shape.refType).toEqual('embedded')
+      expect(shape.resolvedTypeName).toEqual('Account')
     })
   })
 
   describe('referenced', () => {
-    test('valid type with type-ref', () => {
+    test('valid type', () => {
       const obj = create('referenced')
       const {shape} = obj
       expect(shape.valid).toBe(true)
-      expect(shape.is).toEqual('type-ref')
-      expect(shape.ref).toEqual('reference')
-      expect(shape.type.basic).toEqual('Car')
+      expect(shape.is).toEqual('type')
+      expect(shape.refType).toEqual('reference')
+      expect(shape.resolvedTypeName).toEqual('Car')
     })
   })
 })
