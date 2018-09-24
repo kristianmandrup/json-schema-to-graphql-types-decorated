@@ -1,7 +1,8 @@
 const {PrimitiveType} = require('../primitive')
+const {checkType} = require('../base')
 
 function isBoolean(property) {
-  return property.type === 'boolean'
+  return checkType(property, 'boolean')
 }
 
 function resolve({property, config}) {
@@ -20,5 +21,6 @@ class BooleanType extends PrimitiveType {
 
 module.exports = {
   resolve,
+  isBoolean,
   BooleanType
 }

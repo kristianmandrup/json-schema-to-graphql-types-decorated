@@ -1,5 +1,5 @@
 class Base {
-  constructor(config) {
+  constructor(config = {}) {
     this.config = config
     this.log = config.log || console.log
     this.logErr = config.error || console.error

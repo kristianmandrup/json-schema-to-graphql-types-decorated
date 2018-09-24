@@ -1,12 +1,20 @@
 const {Base} = require('../../../../base')
-const {DefinitionRef} = require('../type-ref')
+const {DefinitionRef} = require('../reference')
 const {camelize} = require('./utils')
+
+function checkType(property, type) {
+  if (typeof property !== 'object') {
+    throw new Error('checkType: Invalid property. Must be an object')
+  }
+  return property.type === type || (property.value || {}).type === type
+}
 class PropertyError extends Error {}
 
-class BaseType extends Base {
-  constructor(property, config) {
-    let {ownerName, name, type, value} = property
+class $BaseType extends Base {
+  constructor({property, config}) {
+    super(config)
 
+    let {ownerName, type, value, key} = property
     config = config || {}
     this.property = property
     this.key = key
@@ -17,14 +25,14 @@ class BaseType extends Base {
     this.format = value.format
     this.required = value.required
     this.config = config
-    this.built = built
-
     this.resolveSchema = config.resolveSchema
     this.$schemaRef = config.$schemaRef
     this.reference = this.value.$ref
     this.defRef = new DefinitionRef({schema: this.$schemaRef, reference: this.reference})
-    this.resolveAndMergeReferenced()
+  }
 
+  initialize() {
+    this.resolveAndMergeReferenced()
     this.extractMeta()
     this.extractDecorators()
   }
@@ -140,10 +148,6 @@ class BaseType extends Base {
     return this.baseType || this.refTypeName
   }
 
-  get refType() {
-    return undefined
-  }
-
   get collection() {
     return false
   }
@@ -180,7 +184,16 @@ class BaseType extends Base {
   }
 }
 
+class BaseType extends $BaseType {
+  constructor(property, config) {
+    super(property, config)
+    this.initialize()
+  }
+}
+
 module.exports = {
+  checkType,
+  $BaseType,
   BaseType,
   PropertyError
 }

@@ -1,4 +1,4 @@
-const {resolve} = require('./boolean')
+const {resolve, isBoolean} = require('./boolean')
 
 const booleans = {
   invalid: {
@@ -18,16 +18,37 @@ const booleans = {
 const config = {}
 
 const createParams = (key, value, config = {}) => {
-  return {key, value, type: value.type, config}
+  const property = {
+    key,
+    value
+  }
+  return {property, config}
 }
 
 const $create = (key, value, config) => {
-  return resolve(createParams(key, value, config))
+  const params = createParams(key, value, config)
+  return resolve(params)
 }
 
 const create = (key, config) => {
   return $create(key, booleans[key], config)
 }
+
+describe('isBoolean', () => {
+  describe('type: boolean', () => {
+    const check = isBoolean({type: 'boolean'})
+    test('is valid', () => {
+      expect(check).toBe(true)
+    })
+  })
+
+  describe('type: number', () => {
+    const check = isBoolean({type: 'number'})
+    test('is invalid', () => {
+      expect(check).toBe(false)
+    })
+  })
+})
 
 describe('Boolean', () => {
 
@@ -39,12 +60,13 @@ describe('Boolean', () => {
   describe('basic type', () => {
     const bool = create('basic')
     const {shape} = bool
+    console.log({shape, bool})
 
-    test('is valid type', () => {
+    test.only('is valid type', () => {
       expect(shape.valid).toBe(true)
     })
 
-    test('creates basic type shape', () => {
+    test.only('creates basic type shape', () => {
       expect(shape.name).toEqual('basic')
       expect(shape.is).toEqual('primitive')
       expect(shape.type.basic).toEqual('Boolean')

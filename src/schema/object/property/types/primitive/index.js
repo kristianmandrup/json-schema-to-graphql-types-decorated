@@ -1,1 +1,1 @@
-module.export = require('./primitive')
+module.exports = require('./primitive')
