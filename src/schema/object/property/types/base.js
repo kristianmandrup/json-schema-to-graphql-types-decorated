@@ -55,8 +55,14 @@ class $BaseType extends Base {
     this.extractDecorators()
   }
 
+  get refObject() {
+    return this.reference
+      ? this.defRef.refObject
+      : {}
+  }
+
   resolveAndMergeReferenced() {
-    const remoteObject = this.defRef.refObject
+    const remoteObject = this.refObject
     this.value = {
       ...this.value,
       remoteObject
@@ -176,7 +182,9 @@ class $BaseType extends Base {
   }
 
   get refTypeName() {
-    return this.defRef.typeName
+    return this.reference
+      ? this.defRef.typeName
+      : undefined
   }
 
   get resolvedTypeName() {

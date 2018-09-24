@@ -21,6 +21,7 @@ class DefinitionRef extends Base {
 
   validate() {
     !this.schema && this.error('validate', 'Missing schema')
+    !this.reference && this.error('validate', 'Missing reference')
     return true
   }
 
