@@ -1,4 +1,4 @@
-const {resolve} = require('./number')
+const {resolve, isNumber} = require('./number')
 
 const numbers = {
   invalid: {
@@ -14,16 +14,41 @@ const numbers = {
 const config = {}
 
 const createParams = (key, value, config = {}) => {
-  return {key, value, type: value.type, config}
+  const property = {
+    key,
+    value
+  }
+  return {property, config}
 }
 
 const $create = (key, value, config) => {
-  return resolve(createParams(key, value, config))
+  const params = createParams(key, value, config)
+  return resolve(params)
 }
 
 const create = (key, config) => {
-  return $create(key, numbers[key], config)
+  const value = numbers[key]
+  if (!value) {
+    throw new Error(`no such number entry: ${key}`)
+  }
+  return $create(key, value, config)
 }
+
+describe('isNumber', () => {
+  describe('type: number', () => {
+    const check = isNumber({type: 'number'})
+    test('is valid', () => {
+      expect(check).toBe(true)
+    })
+  })
+
+  describe('type: string', () => {
+    const check = isNumber({type: 'string'})
+    test('is invalid', () => {
+      expect(check).toBe(false)
+    })
+  })
+})
 
 describe('Number', () => {
   test('invalid type', () => {
@@ -40,9 +65,9 @@ describe('Number', () => {
     })
 
     test('creates basic type shape', () => {
-      expect(shape.name).toEqual('age')
-      expect(shape.is).toEqual('primitive')
-      expect(shape.type.basic).toEqual('Int')
+      expect(shape.key).toEqual('age')
+      expect(shape.category).toEqual('primitive')
+      expect(shape.resolvedTypeName).toEqual('int')
     })
   })
 })
@@ -59,8 +84,8 @@ describe('configured with custom scalar type', () => {
   const {shape} = str
 
   test('creates type with custom scalar date', () => {
-    expect(shape.name).toEqual('age')
-    expect(shape.is).toEqual('primitive')
-    expect(shape.type.basic).toEqual('BigInt')
+    expect(shape.key).toEqual('age')
+    expect(shape.category).toEqual('primitive')
+    expect(shape.resolvedTypeName).toEqual('BigInt')
   })
 })

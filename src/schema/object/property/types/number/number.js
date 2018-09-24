@@ -1,11 +1,16 @@
 const {PrimitiveType} = require('../primitive')
+const {checkType} = require('../base')
+
+function isIntegerType(typeName) {
+  return typeName === 'integer'
+}
 
 function isInteger(property) {
-  return property.type === 'integer'
+  return checkType(property, 'integer')
 }
 
 function isNumber(property) {
-  return property.type === 'number' || isInteger(property)
+  return checkType(property, 'number') || isInteger(property)
 }
 
 function resolve({property, config}) {
@@ -18,7 +23,7 @@ class NumberType extends PrimitiveType {
   }
 
   get kind() {
-    return isInteger(this.type)
+    return isIntegerType(this.type)
       ? 'integer'
       : this.defaultType
   }
@@ -30,7 +35,7 @@ class NumberType extends PrimitiveType {
   }
 
   get refTypeName() {
-    const type = this._baseType
+    const type = this.baseType
     const key = type.toLowerCase()
     const custom = this._types[key]
     return custom || type

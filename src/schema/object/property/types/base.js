@@ -4,7 +4,7 @@ const {camelize} = require('./utils')
 
 function checkType(property, type) {
   if (typeof property !== 'object') {
-    throw new Error('checkType: Invalid property. Must be an object')
+    throw new Error(`checkType: Invalid property. Must be an object, was: ${typeof property}: ${property}`)
   }
   return property.type === type || (property.value || {}).type === type
 }
