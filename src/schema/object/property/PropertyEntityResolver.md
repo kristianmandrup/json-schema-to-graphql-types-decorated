@@ -1,6 +1,6 @@
-# Property Resolver
+# Property Entity Resolver
 
-The `PropertyResolver` is used to resolve a property value of an object or schema.
+The `PropertyEntityResolver` is used to resolve a property value of an object or schema to a target `Entity`. The entity has a `shape` with information.
 
 ## resolve
 

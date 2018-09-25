@@ -42,3 +42,7 @@ resolve() {
   return resolver.resolve()
 }
 ```
+
+## Properties Resolver
+
+See [Properties Resolver](./Properties.md)

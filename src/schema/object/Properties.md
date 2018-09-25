@@ -33,3 +33,7 @@ prepareProperty(key) {
   return property
 }
 ```
+
+## Properties Entity Resolver
+
+See [Properties Entity Resolver](./property/PropertyEntityResolver.md)

@@ -10,6 +10,14 @@ Array simply notifies about the type references resolved and lets the end consum
 
 `primitive`
 
+## collection
+
+`true`
+
+## list
+
+`true`
+
 ## expandedType
 
 `array`
@@ -30,39 +38,39 @@ get refTypeName() {
 }
 ```
 
-## firstRefTypeName
+## firstTypeName
 
 Gets the first reference type name
 
 ```js
-get firstRefTypeName() {
-  return this.refTypeNames[0]
+get firstTypeName() {
+  return this.typeNames[0]
 }
 ```
 
-## hasSingleRefType
+## hasSingleType
 
 If array only has a single reference item
 
 ```js
-get hasSingleRefType() {
-  return this.refTypeNameCount === 1
+get hasSingleType() {
+  return this.typeNameCount === 1
 }
 ```
 
-## hasMultipleRefTypes
+## hasMultipleTypes
 
-If array has a multiple reference items
+If array has a multiple items
 
 ```js
-get hasMultipleRefTypes() {
-  return this.refTypeNameCount > 1
+get hasMultipleTypes() {
+  return this.typeNameCount > 1
 }
 ```
 
 ```js
-get refTypeNameCount() {
-  return this.refTypeNames.length
+get typeNameCount() {
+  return this.typeNames.length
 }
 ```
 
@@ -74,64 +82,66 @@ get unionTypeName() {
 }
 ```
 
-## refTypeNames
+## typeNames
 
 The list of reference type names. Perhaps rename to `itemTypeNames` or `resolveTypeNames`?
 
 ```js
-get refTypeNames() {
-  this._refTypeNames = this._refTypeNames || this
+get typeNames() {
+  this._typeNames = this._typeNames || this
     .itemsResolver
     .resolve()
-  return this._refTypeNames
+  return this._typeNames
 }
 ```
 
-## resolveTypeRefs
+## resolveTypes
 
 Uses `arrayTypeRefs.resolve()` to resolve type refs then notifies when resolved.
 
 ```js
-resolveTypeRefs() {
-  const typeRefs = this.refTypeNames
-  this.onTypeRefs(...typeRefs)
+resolveTypes() {
+  this.onTypes(...this.typeNames)
   return this
 }
 ```
 
-### onTypeRefs
+### onTypes
 
-`onTypeRefs` is used to notify that multiple type refs have been resolved, by default simply calling `onTypeRef` to notify for each
+`onTypes` is used to notify that multiple types have been resolved, by default simply calling `onType` to notify for each
 
-Dispatcher can decide to add `typeRefs` (list of type names extracted from `items` valid for Array) as a `union` type, as well as adding edges to state graph etc.
+Dispatcher can decide to add `types` (list of type names extracted from `items` valid for Array) as a `union` type, as well as adding edges to state graph etc.
 
 ```js
-onTypeRefs(...typeRefs) {
-  const payload = {
-    typeRefs: typeRefs,
-    refTypeName: this.refTypeName,
-    union: this.hasMultipleRefTypes,
-    single: this.hasSingleRefType,
-    array: true
+  onTypes(...types) {
+    const payload = this.createPayload({types: types})
+    this.dispatch({payload})
+    types.map(type => this.onType(type))
   }
-
-  this.dispatch({payload})
-  typeRefs.map(typeRef => this.onTypeRefs(typeRef))
-}
 ```
 
-### onTypeRef
+### onType
 
-`onTypeRef` is used to notify that a single type ref has been resolved
+`onType` is used to notify that a single type ref has been resolved.
+Dispatcher decides how to handle each new array type
 
 ```js
-onTypeRef(typeRef) {
-  const payload = {
-    ...typeRef,
-    refType: this.refType,
-    array: true
+  onType(type) {
+    const payload = this.createPayload({type: type})
+    this.dispatch({payload})
   }
-  // dispatcher decides what to do with these types, such as adding edges etc
-  this.dispatch({payload})
+```
+
+### createPayload
+
+Creates a payload ready to be dispatched
+
+```js
+createPayload(payload = {}) {
+  return {
+    ...payload,
+    shape: this.shape,
+    type: this.expandedType
+  }
 }
 ```

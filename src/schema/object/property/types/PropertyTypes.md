@@ -10,3 +10,9 @@ Property types in most contexts can roughly be categorized into the following
 
 - [Base](./Base.md)
 - [String](./string/String.md)
+- [Boolean](./boolean/Boolean.md)
+- [Number](./number/Number.md)
+- [Date](./date/Date.md)
+- [Enum](./enum/Enum.md)
+- [Object](./object/Object.md)
+- [Array](./array/Array.md)
