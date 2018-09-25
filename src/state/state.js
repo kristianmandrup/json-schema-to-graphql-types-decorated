@@ -1,6 +1,5 @@
 const {Base} = require('../base')
-const {GraphState} = require('./graph-state')
-const {colors, person, graph} = require('./data')
+const {ModelGraph} = require('./model-graph')
 const initial = () => ({enums: {}, types: {}, unions: {}})
 
 const isString = (val) => {
@@ -18,11 +17,11 @@ class State extends Base {
   } = {}) {
     super(config)
     this.state = state
-    this.state.graph = this.createGraphState()
+    this.state.graph = this.createModelGraph()
   }
 
-  createGraphState() {
-    return new GraphState(this.config)
+  createModelGraph() {
+    return new ModelGraph(this.config)
   }
 
   onEvent(event) {

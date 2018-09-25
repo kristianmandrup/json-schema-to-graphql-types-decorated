@@ -1,4 +1,5 @@
 const {State} = require('./state')
+const {colors, person, graph} = require('./data')
 
 describe('State', () => {
   const state = new State()

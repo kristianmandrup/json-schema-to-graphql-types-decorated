@@ -1,5 +1,4 @@
 const {colors, person, car} = require('./data')
-
 const {State} = require('./state')
 
 describe('State', () => {
