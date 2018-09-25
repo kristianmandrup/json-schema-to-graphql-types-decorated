@@ -28,7 +28,7 @@ class ObjectType extends BaseType {
   }
 
   get kind() {
-    return 'object'
+    return 'type'
   }
 
   get defaultType() {

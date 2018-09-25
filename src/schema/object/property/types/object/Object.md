@@ -30,21 +30,18 @@ This information can then be used to create relationships by whatever engine cap
 
 If no type name is resolved, no worries, as in the end we will let the `objectTypeNameResolver` resolve it when needed (using a fallback default type).
 
+## resolveType
+
 ```js
 resolveType() {
   const typeName = this.resolveTypeName()
   if (!typeName)
     return
-  this.dispatch({
-    payload: {
-      ownerName: this.ownerName,
-      propertyName: this.key,
-      typeName,
-      object: true
-    }
-  })
+  this.dispatch(createPayload({typeName})
 }
 ```
+
+## resolvedTypeName
 
 To resolve the type name we use `objectTypeNameResolver`, an instance of `ObjectTypeNameResolver` with functionality to resolve using the type name resolution strategies outlined. We call `typeName` to get the type name with fall back.
 
@@ -53,6 +50,8 @@ get resolvedTypeName() {
   return this.objectTypeNameResolver.typeName
 }
 ```
+
+## resolveTypeName
 
 `resolvedTypeName` creates and sets the `typeName` instance used to resolve the full object type name. When called by `resolve` it returns a type name if available.
 

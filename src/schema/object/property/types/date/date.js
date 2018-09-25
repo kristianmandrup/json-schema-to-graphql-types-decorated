@@ -7,7 +7,7 @@ function resolve({property, config}) {
 }
 
 class DateType extends PrimitiveType {
-  get kind() {
+  get expandedType() {
     return 'date'
   }
 

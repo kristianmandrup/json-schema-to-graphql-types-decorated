@@ -15,32 +15,48 @@ class ArrayType extends BaseType {
   constructor({property, config}) {
     super({property, config})
     this.items = this.items || []
-    this.resolveTypeRefs()
+    this.resolveTypes()
+  }
+
+  static create(obj) {
+    return new ArrayType(obj)
   }
 
   get itemsResolver() {
     return new ItemsResolver({items: this.items})
   }
 
-  get kind() {
-    return 'array'
-  }
-
-  get refTypeName() {
-    console.log('refTypeName', {refTypeNames: this.refTypeNames})
-    this.refTypeNames.length === 1
-      ? `${this.fullClassName}Item`
+  get typeName() {
+    return this.hasSingleType
+      ? this.firstTypeName
       : this.unionTypeName
   }
 
-  get unionTypeName() {
+  get firstTypeName() {
     return this.refTypeNames[0]
   }
 
-  get refTypeNames() {
-    return this
+  get hasSingleType() {
+    return this.refTypeNameCount === 1
+  }
+
+  get hasMultipleTypes() {
+    return this.refTypeNameCount > 1
+  }
+
+  get typeNameCount() {
+    return this.refTypeNames.length
+  }
+
+  get unionTypeName() {
+    return `${this.fullClassName}Item`
+  }
+
+  get typeNames() {
+    this._typeNames = this._typeNames || this
       .itemsResolver
       .resolve()
+    return this._typeNames
   }
 
   get collection() {
@@ -55,39 +71,30 @@ class ArrayType extends BaseType {
     return Array.isArray(this.items)
   }
 
-  resolveTypeRefs() {
-    const typeRefs = this.refTypeNames
-    this.onTypeRefs(...typeRefs)
+  resolveTypes() {
+    this.onTypes(...this.typeNames)
     return this
   }
 
-  // dispatcher can then decide to add typeRefs as Union type as well as adding
-  // edges etc.
-  onTypeRefs(...typeRefs) {
-    const payload = {
-      typeRefs: typeRefs,
-      refTypeName: this.refTypeName,
-      union: true,
-      array: true
-    }
-
+  // dispatcher decides how to handle new array types
+  onTypes(...types) {
+    const payload = this.createPayload({types: types})
     this.dispatch({payload})
-    typeRefs.map(typeRef => this.onTypeRefs(typeRef))
+    types.map(type => this.onType(type))
   }
 
-  onTypeRef(typeRef) {
-    const payload = {
-      ...typeRef,
-      refType: this.refType,
-      array: true
-    }
-    // dispatcher can then decide to add typeRefs as Union type as well as adding
-    // edges etc.
+  // dispatcher decides how to handle each new array type
+  onType(type) {
+    const payload = this.createPayload({type: type})
     this.dispatch({payload})
   }
 
-  static create(obj) {
-    return new ArrayType(obj)
+  createPayload(payload = {}) {
+    return {
+      ...payload,
+      shape: this.shape,
+      type: this.expandedType
+    }
   }
 }
 

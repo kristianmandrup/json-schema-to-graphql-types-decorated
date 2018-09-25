@@ -27,14 +27,17 @@ class $BaseType extends Base {
     } = property
 
     this.property = property
-    this.key = key
-    this.name = name || key
-    this.ownerName = ownerName
-    this.type = type
-    this.format = format
+    this.name = {
+      key: key,
+      property: name || key,
+      owner: ownerName // Person, Car whoever has the property that references this object
+    }
+    this.type = {
+      property: type,
+      format: format
+    }
     this.required = required
     this.config = config
-
     const {resolveSchema, rootSchema} = config
     this.resolveSchema = resolveSchema
     this.rootSchema = rootSchema
@@ -137,28 +140,24 @@ class $BaseType extends Base {
       decorators: this.decorators, // decorators extracted from value and config
       config: this.config, // the full config
       value: this.value, // the full property value
-      jsonPropType: this.type, // raw
-      type: this.type,
-      expandedType: this.kind, // string, number, enum, date, ...
-      kind: this.kind,
-
-      is: this.is, // custom
-      category: this.category, // primitive, enum or object
-
-      fullClassName: this.fullClassName, // ownerName + key
-      ownerName: this.ownerName, // Person, Car whoever has the property that references this object
-      baseType: this.baseType, // base type
-
-      // the resolved type, such as PersonCar for a Car object under a Person or MegaCar for a remote ref
-      resolvedTypeName: this.resolvedTypeName,
-
-      // for Array
-      refTypeNames: this.refTypeNames,
-      refTypeName: this.refTypeName,
-
-      key: this.key,
-      name: this.name,
-
+      name: {
+        ...this.name
+      },
+      type: {
+        ...this.type,
+        base: this.baseType, // base type
+        expanded: this.expandedType, // string, number, enum, date, ...
+        is: this.is, // custom
+        category: this.category, // custom
+        kind: this.kind, // primitive, enum or type
+        fullName: this.fullTypeName, // ownerName + key,
+        resolved: this.resolvedTypeName,
+        reference: {
+          // for Array or Object
+          names: this.refTypeNames,
+          name: this.refTypeName
+        }
+      },
       valid: Boolean(this.valid),
       required: Boolean(this.required),
 
@@ -168,7 +167,12 @@ class $BaseType extends Base {
     }
   }
 
-  get category() {
+  // by default just the property type
+  get expandedType() {
+    return this.type.property
+  }
+
+  get kind() {
     return 'primitive'
   }
 
@@ -181,8 +185,24 @@ class $BaseType extends Base {
   }
 
   // used for embedded objects if otherwise unable to determine a good type name
-  get fullClassName() {
-    return camelize([this.ownerName, this.key].join('_'))
+  get fullTypeName() {
+    return this
+      .pathNames
+      .join(this.separator.type))
+  }
+
+  get fullName() {
+    return this
+      .pathNames
+      .join(this.separator.name)
+  }
+
+  get pathNames() {
+    return [this.ownerName, this.key]
+  }
+
+  get separator() {
+    return {name: '_', type: '_'}
   }
 
   get refTypeName() {

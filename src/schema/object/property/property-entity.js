@@ -50,9 +50,12 @@ class PropertyEntityResolver extends Base {
     return true
   }
 
-  resolve() {
+  resolveMap(shapeResolver) {
     this.validate()
-    this.map = Object
+    shapeResolver = shapeResolver || this
+      .shapeResolver
+      .bind(this)
+    return Object
       .keys(resolvers)
       .reduce((acc, key) => {
         const resolver = resolvers[key]
@@ -61,17 +64,30 @@ class PropertyEntityResolver extends Base {
         const resultKey = resolved
           ? resolved.category
           : undefined
-        resolved && assignAt(acc, resultKey, this.shapeResolved(resolved))
+        resolved && assignAt(acc, resultKey, shapeResolver(resolved))
         return acc
       }, {})
+  }
 
+  resolve() {
+    this.map = this.resolveTypes()
     const entity = this.selectEntity(this.map)
     this.onEntity(entity)
     return entity
   }
 
-  shapeResolved(resolved) {
-    return resolved.shape.resolvedTypeName
+  resolveTypes() {
+    return this
+      .resolveMap()
+      .map(this.itemType.bind(this))
+  }
+
+  itemType(item) {
+    return item.resolvedTypeName
+  }
+
+  shapeResolver(resolved) {
+    return resolved.shape
   }
 
   selectEntity(map) {

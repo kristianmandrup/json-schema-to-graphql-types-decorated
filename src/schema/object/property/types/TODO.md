@@ -1,6 +1,5 @@
 # TODO
 
-- test `items` and `array`
 - make shape structured by grouping info
 
 ```js

@@ -20,7 +20,6 @@ class ItemsResolver extends Base {
 
   resolveItem(item) {
     return this.typeResolver(item)
-
   }
 
   typeResolver(item) {

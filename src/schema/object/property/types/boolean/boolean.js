@@ -10,10 +10,6 @@ function resolve({property, config}) {
 }
 
 class BooleanType extends PrimitiveType {
-  get baseType() {
-    return 'Boolean'
-  }
-
   static create(obj) {
     return new BooleanType(obj)
   }

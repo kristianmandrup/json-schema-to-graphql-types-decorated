@@ -6,18 +6,93 @@ Some contexts only allow an array to have a single type for all elements, wherea
 
 Array simply notifies about the type references resolved and lets the end consumer handle the details.
 
+## itemsResolver
+
+A resolver to resolve `items` to type name
+
+## kind
+
+By default `array`
+
+## refTypeName
+
+The resolved reference type name. If the array has multiple ref types, a union type name is generated.
+
+```js
+get refTypeName() {
+  return this.refTypeNameCount === 1
+    ? this.firstRefTypeName
+    : `${this.fullClassName}Item`
+}
+```
+
+## firstRefTypeName
+
+Gets the first reference type name
+
+```js
+get firstRefTypeName() {
+  return this.refTypeNames[0]
+}
+```
+
+## hasSingleRefType
+
+If array only has a single reference item
+
+```js
+get hasSingleRefType() {
+  return this.refTypeNameCount === 1
+}
+```
+
+## hasMultipleRefTypes
+
+If array has a multiple reference items
+
+```js
+get hasMultipleRefTypes() {
+  return this.refTypeNameCount > 1
+}
+```
+
+```js
+get refTypeNameCount() {
+  return this.refTypeNames.length
+}
+```
+
+## unionTypeName
+
+```js
+get unionTypeName() {
+  return `${this.fullClassName}Item`
+}
+```
+
+## refTypeNames
+
+The list of reference type names. Perhaps rename to `itemTypeNames` or `resolveTypeNames`?
+
+```js
+get refTypeNames() {
+  this._refTypeNames = this._refTypeNames || this
+    .itemsResolver
+    .resolve()
+  return this._refTypeNames
+}
+```
+
 ## resolveTypeRefs
 
 Uses `arrayTypeRefs.resolve()` to resolve type refs then notifies when resolved.
 
 ```js
-  resolveTypeRefs() {
-    const typeRefs = this
-      .arrayTypeRefs
-      .resolve()
-    this.onTypeRefs(...typeRefs)
-    return this
-  }
+resolveTypeRefs() {
+  const typeRefs = this.refTypeNames
+  this.onTypeRefs(...typeRefs)
+  return this
+}
 ```
 
 ### onTypeRefs
@@ -31,7 +106,8 @@ onTypeRefs(...typeRefs) {
   const payload = {
     typeRefs: typeRefs,
     refTypeName: this.refTypeName,
-    union: true,
+    union: this.hasMultipleRefTypes,
+    single: this.hasSingleRefType,
     array: true
   }
 
