@@ -3,12 +3,14 @@ const Graph = require('graph.js/dist/graph.full')
 
 class ModelGraph extends Base {
   constructor(config = {}) {
-    this.graph = graph.instance || this.createGraph(config.graph)
+    super(config = {})
+    const {graph} = config
+    this.graph = (graph && graph.instance) || this.createGraph(config.graph)
     this.config = config
   }
 
   createGraph(options = {}) {
-    return new Graph(options)
+    return new Graph()
   }
 
   addEdge(from, to, value) {

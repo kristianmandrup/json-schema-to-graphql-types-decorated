@@ -1,5 +1,6 @@
 const {Base} = require('../base')
-const {ModelGraph} = require('./model-graph')
+const {GraphState} = require('./graph-state')
+const {colors, person, graph} = require('./data')
 const initial = () => ({enums: {}, types: {}, unions: {}})
 
 const isString = (val) => {
@@ -25,9 +26,21 @@ class State extends Base {
   }
 
   onEvent(event) {
-    const {sender, payload}
-    const {action} = payload
-    this[action](payload)
+    const {sender, payload} = event
+    const {action} = payload || {}
+    action
+      ? this.execute({action, payload})
+      : this.noAction(event)
+  }
+
+  noAction(event) {
+    this.log({event})
+    this.warn('onEvent', 'event missing action')
+  }
+
+  execute({action, payload}) {
+    const method = this[action]
+    return method && method(payload)
   }
 
   get types() {
@@ -96,7 +109,7 @@ class State extends Base {
   }
 
   // TODO: also try to add/ensure node in graph
-  setValue({map, value, type}) {
+  setEntry({map, value, type}) {
     map[name] = value
     return this
   }

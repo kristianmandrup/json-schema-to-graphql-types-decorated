@@ -1,4 +1,5 @@
 const {Base} = require('../base')
+const {ModelGraph} = require('./model-graph')
 
 class GraphState extends Base {
   constructor(config) {
