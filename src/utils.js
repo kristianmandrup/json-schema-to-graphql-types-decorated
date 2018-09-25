@@ -44,6 +44,10 @@ const isFunctionType = (obj) => {
   return typeof obj === 'function'
 }
 
+const isStringType = (obj) => {
+  return typeof obj === 'string'
+}
+
 const isArrayType = (obj) => {
   return Array.isArray(obj)
 }
@@ -60,5 +64,6 @@ module.exports = {
   isFunctionType,
   isCollection,
   isArrayType,
-  isObjectType
+  isObjectType,
+  isStringType
 }

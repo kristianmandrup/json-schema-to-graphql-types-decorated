@@ -25,7 +25,7 @@ class $BaseType extends Base {
       key,
       $ref
     } = property
-
+    owner = owner || {}
     this.property = property
     this.owner = owner
     this.key = key
@@ -152,6 +152,7 @@ class $BaseType extends Base {
       // various type information
       type: {
         ...this.type,
+        refType: this.refType,
         base: this.baseType,
         // string, number, enum, date, ...
         expanded: this.expandedType,

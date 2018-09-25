@@ -1,4 +1,5 @@
-const {BaseType} = require('../base')
+// const {BaseType} = require('../base')
+const {PrimitiveType} = require('../primitive')
 const {ItemsResolver} = require('./items')
 // const {isObjectType} = require('../utils')
 
@@ -11,7 +12,7 @@ function resolve({property, config}) {
   return isArray(property) && ArrayType.create({property, config})
 }
 
-class ArrayType extends BaseType {
+class ArrayType extends PrimitiveType {
   constructor({property, config}) {
     super({property, config})
     this.items = this.items || []
@@ -33,23 +34,25 @@ class ArrayType extends BaseType {
   }
 
   get firstTypeName() {
-    return this.refTypeNames[0]
+    return this.typeNames[0]
   }
 
   get hasSingleType() {
-    return this.refTypeNameCount === 1
+    return this.typeNameCount === 1
   }
 
   get hasMultipleTypes() {
-    return this.refTypeNameCount > 1
+    return this.typeNameCount > 1
   }
 
   get typeNameCount() {
-    return this.refTypeNames.length
+    return this.typeNames.length
   }
 
   get unionTypeName() {
-    return `${this.fullClassName}Item`
+    return this.fullClassName
+      ? `${this.fullClassName}Item`
+      : this.firstTypeName
   }
 
   get typeNames() {

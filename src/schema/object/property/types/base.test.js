@@ -286,7 +286,8 @@ describe.only('BaseType', () => {
         kind: 'primitive',
         reference: {
           name: 'Car',
-          names: []
+          names: [],
+          resolved: '#/definitions/car'
         },
         resolved: 'Car'
       })

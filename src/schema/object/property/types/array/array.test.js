@@ -10,12 +10,11 @@ const arrays = {
     name: 'accounts',
     "items": [
       {
-        "type": {
-          "name": "Account",
-          properties: {
-            "name": {
-              "type": "array"
-            }
+        type: 'object',
+        name: "Account",
+        properties: {
+          "name": {
+            "type": "array"
           }
         }
       }
@@ -81,26 +80,61 @@ describe('toArray', () => {
   describe('item type is embedded', () => {
     const arr = create('embedded')
     const {shape} = arr
-    test('creates shape with embedded type', () => {
-      expect(shape.name).toEqual('accounts')
-      expect(shape.expandedType).toEqual('array')
-      expect(shape.type).toEqual('array')
-      expect(shape.category).toEqual('primitive')
-      expect(shape.refType).toEqual('embedded')
-      expect(shape.resolvedTypeName).toEqual('Account')
+
+    describe('name', () => {
+      test('property', () => {
+        expect(shape.name.property).toEqual('accounts')
+      })
+    })
+
+    describe('type', () => {
+      test('expanded: array', () => {
+        expect(shape.type.expanded).toEqual('array')
+      })
+
+      test('kind: primitive', () => {
+        expect(shape.type.kind).toEqual('primitive')
+      })
+
+      test('reference: embedded', () => {
+        expect(shape.refType).toEqual('embedded')
+      })
+
+      test('resolvedName: Account', () => {
+        console.log({shape, type: shape.type})
+        expect(shape.type.resolved).toEqual('Account')
+      })
     })
   })
 
   describe('item type is definiton reference', () => {
-    test('creates shape with reference type', () => {
-      const arr = create('defRef')
-      const {shape} = arr
-      expect(shape.name).toEqual('accounts')
-      expect(shape.type).toEqual('array')
-      expect(shape.category).toEqual('primitive')
-      expect(shape.refTypeName).toEqual('Account')
-      expect(shape.refTypeNames).toEqual(['Account'])
-      expect(shape.resolvedTypeName).toEqual('Account')
+    const arr = create('defRef')
+    const {shape} = arr
+
+    describe('shape with reference type', () => {
+      describe('name', () => {
+        test('property', () => {
+          expect(shape.name.property).toEqual('accounts')
+        })
+      })
+
+      describe('type', () => {
+        test('expanded: array', () => {
+          expect(shape.type.expanded).toEqual('array')
+        })
+
+        test('kind: primitive', () => {
+          expect(shape.type.kind).toEqual('primitive')
+        })
+
+        test('reference: embedded', () => {
+          expect(shape.type.reference).toEqual('reference')
+        })
+
+        test('resolvedName: Account', () => {
+          expect(shape.type.resolved).toEqual('Account')
+        })
+      })
     })
   })
 })
