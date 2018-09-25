@@ -6,15 +6,19 @@ Some contexts only allow an array to have a single type for all elements, wherea
 
 Array simply notifies about the type references resolved and lets the end consumer handle the details.
 
+## kind
+
+`primitive`
+
+## expandedType
+
+`array`
+
 ## itemsResolver
 
 A resolver to resolve `items` to type name
 
-## kind
-
-By default `array`
-
-## refTypeName
+## typeName
 
 The resolved reference type name. If the array has multiple ref types, a union type name is generated.
 

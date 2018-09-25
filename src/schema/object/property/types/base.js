@@ -17,7 +17,7 @@ class $BaseType extends Base {
   } = {}) {
     super(config)
     let {
-      ownerName,
+      owner,
       type,
       format,
       name,
@@ -27,10 +27,12 @@ class $BaseType extends Base {
     } = property
 
     this.property = property
+    this.owner = owner
+    this.key = key
     this.name = {
       key: key,
       property: name || key,
-      owner: ownerName // Person, Car whoever has the property that references this object
+      owner: owner.name // Person, Car whoever has the property that references this object
     }
     this.type = {
       property: type,
@@ -44,7 +46,7 @@ class $BaseType extends Base {
     this.reference = $ref
   }
 
-  get defRef() {
+  get refResolver() {
     const args = {
       schema: this.rootSchema,
       reference: this.reference
@@ -61,7 +63,7 @@ class $BaseType extends Base {
 
   get refObject() {
     return this.reference
-      ? this.defRef.refObject
+      ? this.refResolver.refObject
       : {}
   }
 
@@ -80,13 +82,14 @@ class $BaseType extends Base {
 
   extractDecorators() {
     const {namespace} = this.config
-    const {ownerName, key} = this
+    let {owner, key} = this
+    owner = owner || {}
     this.ownMeta = (namespace
       ? this.property[namespace]
       : this.property) || {}
     const ownDecorators = this.ownMeta.decorators
     const decorators = this.config.decorators || {}
-    this.classDecorators = (decorators[ownerName] || {})[key] || {}
+    this.classDecorators = (decorators[owner.name] || {})[key] || {}
     this.propDecorators = decorators[key] || {}
     // merge by precedence: own, class, prop, so own overrides all
     this.decorators = {
@@ -137,37 +140,49 @@ class $BaseType extends Base {
 
   get shape() {
     return {
-      decorators: this.decorators, // decorators extracted from value and config
-      config: this.config, // the full config
-      value: this.value, // the full property value
-      name: {
-        ...this.name
-      },
+      // decorators extracted from value and config
+      decorators: this.decorators,
+      // the full config
+      config: this.config,
+      // the full property received as input
+      property: this.property,
+      name: this.name,
+      // custom meta data
+      meta: this.meta,
+      // various type information
       type: {
         ...this.type,
-        base: this.baseType, // base type
-        expanded: this.expandedType, // string, number, enum, date, ...
-        is: this.is, // custom
-        category: this.category, // custom
-        kind: this.kind, // primitive, enum or type
-        fullName: this.fullTypeName, // ownerName + key,
+        base: this.baseType,
+        // string, number, enum, date, ...
+        expanded: this.expandedType,
+        // primitive, enum or type
+        kind: this.kind,
+        // ownerName + key
+        fullName: this.fullTypeName,
         resolved: this.resolvedTypeName,
+        // for Array or Object
         reference: {
-          // for Array or Object
-          names: this.refTypeNames,
-          name: this.refTypeName
+          resolved: this.reference,
+          names: this.typeNames,
+          name: this.typeName
         }
       },
       valid: Boolean(this.valid),
       required: Boolean(this.required),
 
+      // usually for Array or Object
       collection: Boolean(this.collection),
       list: Boolean(this.list),
       dictionary: Boolean(this.dictionary)
     }
   }
+  // to add custom information
+  get meta() {
+    return {}
+  }
 
-  // by default just the property type
+  // by default just the property type override for each type resolver, such as
+  // enum, date etc
   get expandedType() {
     return this.type.property
   }
@@ -186,9 +201,10 @@ class $BaseType extends Base {
 
   // used for embedded objects if otherwise unable to determine a good type name
   get fullTypeName() {
-    return this
+    const name = this
       .pathNames
-      .join(this.separator.type))
+      .join(this.separator.type)
+    return camelize(name)
   }
 
   get fullName() {
@@ -198,21 +214,33 @@ class $BaseType extends Base {
   }
 
   get pathNames() {
-    return [this.ownerName, this.key]
+    return [this.owner.name, this.key]
   }
 
   get separator() {
     return {name: '_', type: '_'}
   }
 
-  get refTypeName() {
+  hasTypeNames() {
+    return this.typeNames && this.typeNames.length > 0
+  }
+
+  get refType() {
     return this.reference
-      ? this.defRef.typeName
-      : undefined
+      ? 'reference'
+      : 'embedded'
+  }
+
+  get typeNames() {
+    return []
+  }
+
+  get typeName() {
+    return this.reference && this.refResolver.typeName
   }
 
   get resolvedTypeName() {
-    return this.refTypeName || this.baseType
+    return this.typeName || this.baseType
   }
 
   get collection() {
@@ -242,12 +270,6 @@ class $BaseType extends Base {
   error(name, msg) {
     name = [this.key, this.type, name].join('::')
     super.error(name, msg)
-  }
-
-  get refType() {
-    return this.reference
-      ? 'reference'
-      : 'embedded'
   }
 }
 

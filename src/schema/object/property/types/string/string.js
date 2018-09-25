@@ -13,10 +13,6 @@ class StringType extends PrimitiveType {
     return 'String'
   }
 
-  get kind() {
-    return 'string'
-  }
-
   get baseType() {
     return this._types.string || this.defaultType
   }

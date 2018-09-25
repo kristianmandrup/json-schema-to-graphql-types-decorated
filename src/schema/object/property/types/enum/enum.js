@@ -10,7 +10,7 @@ function resolve({property, config}) {
 }
 
 class EnumType extends BaseType {
-  get kind() {
+  get expandedType() {
     return 'enum'
   }
 
@@ -18,12 +18,8 @@ class EnumType extends BaseType {
     return this.property.enum
   }
 
-  get category() {
+  get kind() {
     return 'enum'
-  }
-
-  get propTypeName() {
-    return camelize(this.key)
   }
 
   static create(property, config) {
@@ -38,9 +34,7 @@ class EnumType extends BaseType {
   }
 
   get values() {
-    return this
-      .enum
-      .map(val => val)
+    return this.enum
   }
 }
 

@@ -29,16 +29,21 @@ class NumberType extends PrimitiveType {
   }
 
   get baseType() {
-    return this._type === 'number'
-      ? 'Float'
-      : 'Int'
+    return this.type.property === 'number'
+      ? this.baseNumberType
+      : this.baseIntegerType
   }
 
-  get refTypeName() {
-    const type = this.baseType
-    const key = type.toLowerCase()
-    const custom = this._types[key]
-    return custom || type
+  get baseNumberType() {
+    this._types.number || this.baseFloatType
+  }
+
+  get baseFloatType() {
+    this._types.float || 'Float'
+  }
+
+  get baseIntegerType() {
+    this._types.integer || 'Int'
   }
 
   static create(obj) {

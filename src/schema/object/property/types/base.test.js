@@ -36,7 +36,9 @@ describe('checkType', () => {
 })
 
 const format = 'date-time'
-const ownerName = 'person'
+const owner = {
+  name: 'person'
+}
 const type = 'string'
 const name = 'myName'
 const required = true
@@ -57,7 +59,7 @@ const rootSchema = {
 const property = {
   format,
   required: true,
-  ownerName,
+  owner,
   type,
   format,
   name,
@@ -80,7 +82,7 @@ const config = {
   resolveSchema,
   rootSchema,
   decorators: {
-    [ownerName]: {
+    [owner.name]: {
       [key]: classDecObj
     },
     [key]: propDecObj
@@ -99,8 +101,8 @@ describe('$BaseType', () => {
       expect(base.name).toBe(name)
     })
 
-    test('ownerName', () => {
-      expect(base.ownerName).toBe(ownerName)
+    test('owner', () => {
+      expect(base.owner.ame).toBe(owner.name)
     })
 
     test('type', () => {
@@ -205,12 +207,16 @@ describe.only('BaseType', () => {
     expect(base.baseType).toEqual('any')
   })
 
-  test('fullClassName', () => {
-    expect(base.fullClassName).toEqual('PersonKitty')
+  test('fullName', () => {
+    expect(base.fullName).toEqual('person_kitty')
   })
 
-  test('refTypeName', () => {
-    expect(base.refTypeName).toEqual('Car')
+  test('fullTypeName', () => {
+    expect(base.fullTypeName).toEqual('PersonKitty')
+  })
+
+  test('typeName', () => {
+    expect(base.typeName).toEqual('Car')
   })
 
   test('resolvedTypeName', () => {
@@ -246,21 +252,44 @@ describe.only('BaseType', () => {
       base.reference = undefined
       expect(base.refType).toEqual('embedded')
     })
+  })
 
-    test('category', () => {
-      expect(base.category).toEqual('primitive')
-    })
-
-    test('is', () => {
-      expect(base.is).toBeUndefined()
+  describe('kind', () => {
+    test('type.kind', () => {
+      expect(base.kind).toEqual('primitive')
     })
   })
 
   describe('shape', () => {
+    const {shape} = base
+
     test('is a snapshot object with many keys', () => {
-      const {shape} = base
       expect(typeof shape).toEqual('object')
-      expect(Object.keys(shape).length > 10).toBeTruthy()
+      expect(Object.keys(shape).length > 3).toBeTruthy()
+    })
+
+    test('decorators', () => {
+      expect(shape.decorators).toEqual({classDec: 2, propDec: 3})
+    })
+
+    test('name', () => {
+      expect(shape.name).toEqual({key: 'kitty', owner: 'person', property: 'myName'})
+    })
+
+    test('type', () => {
+      expect(shape.type).toEqual({
+        property: 'string',
+        format: 'date-time',
+        base: 'any',
+        expanded: 'string',
+        fullName: 'PersonKitty',
+        kind: 'primitive',
+        reference: {
+          name: 'Car',
+          names: []
+        },
+        resolved: 'Car'
+      })
     })
   })
 })
