@@ -1,11 +1,15 @@
 const camelcase = require('camelcase')
 
-const assign = (left, right) => {
-  left = right
+const assign = (variable, value) => {
+  variable = value
 }
 
-const assignAt = (left) => (at, right) => {
-  left[at] = right
+const createAssign = (map) => (pos, value) => {
+  map[pos] = value
+}
+
+const assignAt = (map, pos, value) => {
+  map[pos] = value
 }
 
 /**

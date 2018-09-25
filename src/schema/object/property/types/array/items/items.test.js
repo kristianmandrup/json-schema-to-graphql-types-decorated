@@ -12,7 +12,7 @@ describe('ItemsResolver', () => {
 
   const resolver = new ItemsResolver({items, config})
 
-  describe.only('typeResolver', () => {
+  describe('typeResolver', () => {
     const resolved = resolver.typeResolver(strItem)
     test('resolves', () => {
       expect(resolved).toEqual('String')
@@ -20,9 +20,14 @@ describe('ItemsResolver', () => {
   })
 
   describe('resolveItem', () => {
-    const resolved = resolver.resolveItem(strItem)
-    test('resolves', () => {
+    test('resolves string', () => {
+      const resolved = resolver.resolveItem(strItem)
       expect(resolved).toEqual('String')
+    })
+
+    test('resolves integer', () => {
+      const resolved = resolver.resolveItem(intItem)
+      expect(resolved).toEqual('Int')
     })
   })
 
@@ -30,7 +35,7 @@ describe('ItemsResolver', () => {
     const resolved = resolver.resolve()
 
     test('resolves', () => {
-      expect(resolved).toEqual(['String', 'Integer'])
+      expect(resolved).toEqual(['String', 'Int'])
     })
 
   })

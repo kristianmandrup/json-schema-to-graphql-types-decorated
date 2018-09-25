@@ -30,8 +30,8 @@ class NumberType extends PrimitiveType {
 
   get baseType() {
     return this._type === 'number'
-      ? 'float'
-      : 'int'
+      ? 'Float'
+      : 'Int'
   }
 
   get refTypeName() {

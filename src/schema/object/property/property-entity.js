@@ -1,6 +1,6 @@
 const {resolvers} = require('./types')
 const {Base} = require('../../../base')
-const {isObjectType, isFunctionType} = require('../../../utils')
+const {isObjectType, isFunctionType, assignAt} = require('../../../utils')
 
 const createPropertyEntityResolver = ({property, config}) => {
   return new PropertyEntityResolver({property, config})
@@ -57,13 +57,38 @@ class PropertyEntityResolver extends Base {
       .reduce((acc, key) => {
         const resolver = resolvers[key]
         this.validateResolver(resolver, key)
-        acc[key] = resolver({property: this.property, config: this.config})
+        const resolved = resolver({property: this.property, config: this.config})
+        const resultKey = resolved
+          ? resolved.category
+          : undefined
+        resolved && assignAt(acc, resultKey, this.shapeResolved(resolved))
         return acc
       }, {})
 
-    const entity = this.$object || this.$enum || this.$primitive
+    const entity = this.selectEntity(this.map)
     this.onEntity(entity)
     return entity
+  }
+
+  shapeResolved(resolved) {
+    return resolved.shape.resolvedTypeName
+  }
+
+  selectEntity(map) {
+    if (map.primitive && map.enum) {
+      return map.enum
+    }
+    const values = Object.values(map)
+    const keys = Object.keys(map)
+    return values.length === 1
+      ? values[0]
+      : this.onSelectConflict({map, values, keys})
+  }
+
+  onSelectConflict({map, values, keys}) {
+    values.length === 0
+      ? this.error('selectEntity', `no resolver result`)
+      : this.error('selectEntity', `conflicting result: ${keys.join(', ')}`)
   }
 
   onEntity(entity) {
@@ -87,35 +112,6 @@ class PropertyEntityResolver extends Base {
     this
       .dispatcher
       .dispatch(event)
-  }
-
-  get $object() {
-    this.object = this.object || (this.map.object || {}).shape
-    return this.object && {
-      value: this.object,
-      type: 'object'
-    }
-  }
-
-  get $enum() {
-    this.enum = this.enum || (this.map.enum || {}).shape
-    return this.enum && {
-      value: this.enum,
-      type: 'enum'
-    }
-  }
-
-  get $primitive() {
-    if (this.$enum) 
-      return
-
-    const {array, date, string, number} = this.map
-    this.prim = this.prim || (array || date || string || number || {}).shape
-
-    return this.prim && {
-      value: this.prim,
-      type: 'primitive'
-    }
   }
 }
 

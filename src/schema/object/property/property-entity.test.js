@@ -1,10 +1,5 @@
 const {createPropertyEntityResolver} = require('./property-entity')
 
-const built = {
-  enums: {},
-  types: {}
-}
-
 const values = {
   number: {
     type: 'number'
@@ -29,7 +24,7 @@ const create = ({property, config}) {
   return new createPropertyEntityResolver({property, config})
 }
 
-describe('SchemaEntry', () => {
+describe('PropertyEntityResolver', () => {
   describe('primitive: number', () => {
     const value = values.number
     const name = 'age'
@@ -39,6 +34,54 @@ describe('SchemaEntry', () => {
       value
     }
     const resolver = create({property, config})
+
+    describe('selectEntity', () => {
+      describe('one primitive result', () => {
+        const map = {
+          primitive: {
+            name: 'x'
+          }
+        }
+        const selected = resolver.selectEntity(map)
+        test('selects only value', () => {
+          expect(selected.name).toEqual('x')
+        })
+      })
+
+      describe('enum and primitive results', () => {
+        const map = {
+          primitive: {
+            name: 'x'
+          },
+          enum: {
+            name: 'myEnum'
+          }
+        }
+        const selected = resolver.selectEntity(map)
+        test('selects enum over primitive', () => {
+          expect(entity.value.name).toEqual('myEnum')
+        })
+      })
+
+      describe('multiple conflicting results', () => {
+        const map = {
+          primitive: {
+            name: 'x'
+          },
+          type: {
+            name: 'myType'
+          }
+        }
+
+        test('throws', () => {
+          try {
+            resolver.selectEntity(map)
+          } catch (err) {
+            expect(err).toBeTruthy()
+          }
+        })
+      })
+    })
 
     describe('resolve', () => {
       const entity = resolver.resolve()

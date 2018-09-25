@@ -19,10 +19,8 @@ class ItemsResolver extends Base {
   }
 
   resolveItem(item) {
-    return this
-      .typeResolver(item)
-      .resolve()
-      .resolvedTypeName
+    return this.typeResolver(item)
+
   }
 
   typeResolver(item) {

@@ -25,7 +25,6 @@ class $BaseType extends Base {
       key,
       $ref
     } = property
-    console.log({name})
 
     this.property = property
     this.key = key
