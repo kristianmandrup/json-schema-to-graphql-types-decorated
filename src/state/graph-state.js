@@ -1,62 +1,61 @@
 const {Base} = require('../base')
 
 class GraphState extends Base {
-  constructor(state, config) {
+  constructor(config) {
     super(config)
-    this.state = state
-    this.state.graph = new ModelGraph(config)
+    this.model = this.createModelGraph(config)
   }
 
-  get graph() {
-    return this.state.graph
+  createModelGraph(opts = {}) {
+    return new ModelGraph(opts)
   }
 
   // delegate
   addEdge(from, to, value) {
     this
-      .graph
+      .model
       .addEdge(from, to, value)
   }
 
   // delegate
   addOrGetNode(value) {
     this
-      .graph
+      .model
       .addOrGetNode(value)
   }
 
   // delegate
   hasNode(key) {
     this
-      .graph
+      .model
       .hasNode(key)
   }
 
   // delegate
   getNode(key) {
     this
-      .graph
+      .model
       .getNode(key)
   }
 
   // delegate
   hasEdge(from, to) {
     this
-      .graph
+      .model
       .hasEdge(from, to)
   }
 
   // delegate
   getEdge(from, to) {
     this
-      .graph
+      .model
       .getEdge(from, to)
   }
 
   // delegate
   ensureNode(key, value) {
     this
-      .graph
+      .model
       .ensureNode(key, value)
   }
 }

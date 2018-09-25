@@ -1,12 +1,27 @@
-const initial = () => ({enums: {}, types: {}, unions: {}, graph: new Graph()})
+const {Base} = require('../base')
+const {ModelGraph} = require('./model-graph')
+const initial = () => ({enums: {}, types: {}, unions: {}})
 
 const isString = (val) => {
   return typeof val === 'string'
 }
 
-class State extends GraphState {
-  constructor(state = initial(), config) {
-    super(state, config)
+const createState = ({state, config}) => {
+  return new State({state, config})
+}
+
+class State extends Base {
+  constructor({
+    state = initial(),
+    config = {}
+  } = {}) {
+    super(config)
+    this.state = state
+    this.state.graph = this.createGraphState()
+  }
+
+  createGraphState() {
+    return new GraphState(this.config)
   }
 
   onEvent(event) {
@@ -23,34 +38,8 @@ class State extends GraphState {
     return this.state.enums
   }
 
-  add(obj, type) {
-    this.ensure(obj, type)
-  }
-
-  addRef($from, $to, refType = 'type') {
-    const from = this.addOrGet($from)
-    const to = this.addOrGet($to)
-    refType = refType || $to.$type
-
-    const fromNode = this.addOrGetNode(from)
-    const toNode = this.addOrGet(to)
-    this.addEdge(fromNode, toNode, {
-      reference: true,
-      refType
-    })
-  }
-
   get(key, type) {
     return this.mapFor(type)[key]
-  }
-
-  ensure(value, type) {
-    type = type || value.$type
-    const map = this.mapFor(type)
-    if (!this.has(value, type)) {
-      map[value.name] = value
-    }
-    return map[value.name]
   }
 
   mapFor(type) {
@@ -68,12 +57,49 @@ class State extends GraphState {
     return this.mapFor(type)[name]
   }
 
-  ensure(obj, type) {
+  add(obj, type) {
     this.ensure(obj, type)
-    this.ensureNode(obj, type)
     return this
   }
 
+  addRef($from, $to, refType = 'type') {
+    const from = this.addOrGet($from)
+    const to = this.addOrGet($to)
+    refType = refType || $to.$type
+
+    // TODO: move to GraphState
+    if (!this.graph) 
+      return
+
+    const fromNode = this
+      .graph
+      .addOrGetNode(from)
+    const toNode = this
+      .graph
+      .addOrGetNode(to)
+    this
+      .graph
+      .addEdge(fromNode, toNode, {
+        reference: true,
+        refType
+      })
+  }
+
+  ensure(value, type) {
+    type = type || value.$type
+    const map = this.mapFor(type)
+    !map && this.erorr('ensure', `Invalid type ${type}`)
+    if (!this.has(value, type)) {
+      this.setEntry({map, value, name: value.name})
+    }
+    return map[value.name]
+  }
+
+  // TODO: also try to add/ensure node in graph
+  setValue({map, value, type}) {
+    map[name] = value
+    return this
+  }
 }
 
 module.exports = {

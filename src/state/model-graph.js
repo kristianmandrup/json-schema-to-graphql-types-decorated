@@ -1,10 +1,14 @@
+const {Base} = require('../base')
 const Graph = require('graph.js/dist/graph.full')
 
-class ModelGraph {
+class ModelGraph extends Base {
   constructor(config = {}) {
-    const {graph} = config
-    this.graph = graph.instance || new Graph(graph.args)
+    this.graph = graph.instance || this.createGraph(config.graph)
     this.config = config
+  }
+
+  createGraph(options = {}) {
+    return new Graph(options)
   }
 
   addEdge(from, to, value) {
