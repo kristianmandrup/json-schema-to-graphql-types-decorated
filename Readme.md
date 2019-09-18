@@ -4,8 +4,8 @@ Convert JSON schema to GraphQL types (string) including GraphQL transforms/direc
 
 ## Quick start
 
-- npm: `npm install json-schema-to-es-mapping -S`
-- yarn: `yarn add json-schema-to-es-mapping`
+- npm: `npm install json-schema-to-graphql-types-decorated -S`
+- yarn: `yarn add json-schema-to-graphql-types-decorated`
 
 Use
 
